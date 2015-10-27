@@ -1,0 +1,99 @@
+type Area
+type Person
+type Cost > nat
+
+pred live(Person, Area)
+pred work(Person, Area)
+pred car(Person)
+pred cost(Area, Cost)
+
+calc cheap(Cost)
+
+example 1 {
+	const Area A1 A2 A3
+	const Person P1 P2
+	const Cost 1 2 3 4 5
+
+	live(P1, A1)
+	live(P2, A2)
+
+	work(P1, A3)
+	work(P2, A3)
+
+	car(P1)
+	car(P2)
+
+	cost(A1, 2)
+	cost(A2, 2)
+	cost(A3, 2)
+}
+
+example 2 {
+	const Area A1 A2
+	const Person P1 P2
+	const Cost 1 2 3 4 5
+
+	live(P1, A1)
+	live(P2, A2)
+
+	work(P1, A1)
+	work(P2, A1)
+
+	car(P2)
+
+	cost(A1, 5)
+	cost(A2, 1)
+}
+
+example 3 {
+	const Area A1 A2 A3
+	const Person P1 P2
+	const Cost 1 2 3 4 5
+
+	live(P1, A1)
+	live(P2, A1)
+
+	work(P1, A2)
+	work(P2, A3)
+
+	car(P1)
+	car(P2)
+
+	cost(A1, 5)
+	cost(A2, 2)
+	cost(A3, 5)
+}
+
+example 4 {
+	const Area A1 A2
+	const Person P1 P2
+	const Cost 1 2 3 4 5
+
+	live(P1, A1)
+	live(P2, A1)
+
+	work(P1, A1)
+	work(P2, A2)
+
+	car(P1)
+	car(P2)
+
+	cost(A1, 5)
+	cost(A2, 2)
+}
+
+example 5 {
+	const Area A1 A2 A3
+	const Person P1 P2
+	const Cost 1 2 3 4 5
+
+	live(P1, A1)
+	live(P2, A1)
+
+	work(P1, A1)
+	work(P2, A1)
+
+	cost(A1, 5)
+	cost(A2, 5)
+	cost(A3, 5)
+}

@@ -1,0 +1,19 @@
+{
+	"configurations": {
+		"default": {
+			"logic": "co-housing.logic",
+			"background": "co-housing.background",
+			"parameters": {
+				"variables": 4,
+				"literals": 4
+			}
+		}
+	},
+	"tasks": [
+		{
+			"configuration": "default",
+			"type": "hard constraints",
+			"print": "{number} : {constraint}"
+		}
+	]
+}
