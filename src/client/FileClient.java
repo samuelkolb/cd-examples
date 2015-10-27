@@ -26,11 +26,19 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Created by samuelkolb on 26/10/15.
+ * A client to execute run files.
  *
  * @author Samuel Kolb
  */
 public class FileClient {
+
+	/**
+	 * Execute the file client from command line.
+	 * @param args	{filename}
+	 */
+	public static void main(String[] args) {
+		new FileClient(new File(args[0])).run();
+	}
 
 	private File file;
 
@@ -65,10 +73,10 @@ public class FileClient {
 	}
 
 	protected Configuration parseConfiguration(JSONObject object) {
-		File file = FileUtil.getLocalFile(getClass().getResource((String) object.get("logic")));
+		File file = new File(this.file.getParentFile(), (String) object.get("logic"));
 		Optional<File> background = object.containsKey("background")
 				? Optional.empty()
-				: Optional.of(FileUtil.getLocalFile(getClass().getResource((String) object.get("background"))));
+				: Optional.of(new File(this.file.getParentFile(), (String) object.get("background")));
 		int variables = (int) object.get("variables");
 		int literals = (int) object.get("literals");
 		return Configuration.fromFile(file, background, variables, literals);
@@ -77,23 +85,18 @@ public class FileClient {
 	protected void runTask(JSONObject object, Map<String, Configuration> configurations) {
 		@SuppressWarnings("RedundantCast")
 		Configuration configuration = configurations.get((String) object.get("configuration"));
-		String type = (String) object.get("type");
-		switch(type.toLowerCase()) {
-			case "optimization":
-				runOptimization(object, configuration);
-				break;
-			case "hard constraints":
-				runHardConstraints(object, configuration);
-				break;
-			case "soft constraints":
-				runSoftConstraints(object, configuration);
-				break;
-			default:
+		String type = ((String) object.get("type")).toLowerCase();
+		if("optimization".equals(type)) {
+			runOptimization(object, configuration);
+		} else if("hard constraints".equals(type)) {
+			runHardConstraints(object, configuration);
+		} else if ("soft constraints".equals(type)) {
+			runSoftConstraints(object, configuration);
 		}
 	}
 	protected void runOptimization(JSONObject object, Configuration configuration) {
 		PreferenceParser preferenceParser = new PreferenceParser(configuration.getLogicBase().getExamples());
-		File file = FileUtil.getLocalFile(getClass().getResource((String) object.get("preferences")));
+		File file = new File(this.file.getParentFile(), (String) object.get("preferences"));
 		Preferences preferences = preferenceParser.parse(FileUtil.readFile(file));
 		ClausalOptimization clausalOptimization = new ClausalOptimization(configuration);
 		ClauseFunction function = clausalOptimization.getClauseFunction(preferences, (double) object.get("c-factor"));
