@@ -1,0 +1,71 @@
+type Activity
+
+pred before(Activity, Activity)
+
+pred cleaning(Activity)
+pred sports(Activity)
+pred eating(Activity)
+pred morning(Activity)
+pred evening(Activity)
+
+example 1 {
+	const Activity Run Shower Breakfast Dinner
+
+	before(Run, Shower)
+	before(Run, Breakfast)
+	before(Shower, Breakfast)
+
+	cleaning(Shower)
+	sports(Run)
+	eating(Breakfast)
+	eating(Dinner)
+
+	morning(Run)
+	morning(Shower)
+	morning(Breakfast)
+	evening(Dinner)
+}
+
+example 2 {
+	const Activity Breakfast Shower Dinner Bath
+
+	before(Breakfast, Shower)
+	before(Dinner, Bath)
+
+	eating(Breakfast)
+	cleaning(Shower)
+	eating(Dinner)
+	cleaning(Bath)
+
+	morning(Breakfast)
+	morning(Shower)
+	evening(Dinner)
+	evening(Bath)
+}
+
+example 3 {
+	const Activity Dinner Soccer Shower
+
+	before(Dinner, Soccer)
+	before(Dinner, Shower)
+	before(Soccer, Shower)
+
+	eating(Dinner)
+	sports(Soccer)
+	cleaning(Shower)
+
+	evening(Dinner)
+	evening(Soccer)
+	evening(Shower)
+}
+
+example 4 {
+	const Activity Breakfast
+
+	eating(Breakfast)
+
+	morning(Breakfast)
+}
+
+pref 2 > 1
+pref 4 > 1

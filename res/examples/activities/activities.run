@@ -1,0 +1,20 @@
+{
+	"configurations" : {
+		"default" : {
+		  	"logic" : "activities.logic",
+			"parameters" : {
+				"variables" : 4,
+				"literals" : 4
+			}
+		}
+	},
+	"tasks" : [
+		{
+		  	"configuration" : "default",
+		  	"preferences" : "activities.logic",
+		  	"c-factor" : 0.1,
+			"type" : "optimization",
+			"print" : "{weight, %f.4} : {constraint}"
+		}
+	]
+}
