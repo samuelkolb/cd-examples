@@ -42,6 +42,9 @@ public class FileClient {
 		this.file = file;
 	}
 
+	/**
+	 * Execute this clients file
+	 */
 	public void run() {
 		try {
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
