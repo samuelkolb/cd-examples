@@ -1,0 +1,20 @@
+{
+	"configurations": {
+		"default": {
+			"logic": "elevator.logic",
+			"background": "elevator.background",
+			"parameters": {
+				"variables": 4,
+				"literals": 3
+			}
+		}
+	},
+	"tasks": [
+		{
+			"configuration": "default",
+			"type": "constraints",
+			"threshold" : 0.5,
+			"print": "{number, % 3d} : {clause}"
+		}
+	]
+}

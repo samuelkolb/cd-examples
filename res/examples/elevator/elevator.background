@@ -1,0 +1,4 @@
+theory B0 : V {
+	!p : ?1e : inside(p, e).
+	!e : (?p1, p2, p3 : p1 ~= p2 & p1 ~= p3 & p2 ~= p3 & inside(p1, e) & inside(p2, e) & inside(p3, e)) <=> crowded(e).
+}
