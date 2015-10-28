@@ -1,0 +1,187 @@
+type Country
+type Color
+
+pred color(Country,Color)
+symm neighbor(Country,Country)
+
+example benelux {
+	const Country Belgium Netherlands Luxembourg
+	const Color Red Green
+
+	color(Netherlands,Red)
+	color(Belgium,Green)
+	color(Luxembourg,Red)
+	neighbor(Belgium,Netherlands)
+	neighbor(Belgium,Luxembourg)
+}
+
+example benede {
+	const Country Belgium Netherlands Germany
+	const Color Red Green Blue
+
+	color(Belgium,Red)
+	color(Netherlands,Green)
+	color(Germany,Blue)
+	neighbor(Belgium,Germany)
+	neighbor(Netherlands,Germany)
+	neighbor(Belgium,Netherlands)
+}
+
+example large {
+	const Country C1 C2 C3 C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 C14 C15 C16 C17 C18 C19 C20 C21 C22 C23
+	const Color Blue Red Yellow Green Black
+
+	color(C1, Black)
+    color(C2, Blue)
+    color(C3, Yellow)
+    color(C4, Yellow)
+    color(C5, Red)
+    color(C6, Red)
+    color(C7, Red)
+    color(C8, Green)
+    color(C9, Green)
+    color(C10, Red)
+    color(C11, Yellow)
+    color(C12, Black)
+    color(C13, Blue)
+    color(C14, Green)
+    color(C15, Green)
+    color(C16, Red)
+    color(C17, Red)
+    color(C18, Red)
+    color(C19, Green)
+    color(C20, Green)
+    color(C21, Red)
+    color(C22, Blue)
+    color(C23, Yellow)
+
+	neighbor(C1, C2)
+	neighbor(C1, C4)
+	neighbor(C1, C7)
+	neighbor(C1, C9)
+	neighbor(C1, C13)
+	neighbor(C1, C15)
+	neighbor(C1, C18)
+	neighbor(C1, C20)
+	neighbor(C2, C3)
+	neighbor(C2, C6)
+	neighbor(C2, C8)
+	neighbor(C2, C12)
+	neighbor(C2, C14)
+	neighbor(C2, C17)
+	neighbor(C2, C19)
+	neighbor(C3, C5)
+	neighbor(C3, C7)
+	neighbor(C3, C10)
+	neighbor(C3, C13)
+	neighbor(C3, C16)
+	neighbor(C3, C18)
+	neighbor(C3, C21)
+	neighbor(C4, C5)
+	neighbor(C4, C6)
+	neighbor(C4, C10)
+	neighbor(C4, C12)
+	neighbor(C4, C16)
+	neighbor(C4, C17)
+	neighbor(C4, C21)
+	neighbor(C5, C8)
+	neighbor(C5, C9)
+	neighbor(C5, C14)
+	neighbor(C5, C15)
+	neighbor(C5, C19)
+	neighbor(C5, C20)
+	neighbor(C6, C11)
+	neighbor(C6, C13)
+	neighbor(C6, C15)
+	neighbor(C6, C22)
+	neighbor(C7, C11)
+	neighbor(C7, C12)
+	neighbor(C7, C14)
+	neighbor(C7, C22)
+	neighbor(C8, C11)
+	neighbor(C8, C13)
+	neighbor(C8, C16)
+	neighbor(C8, C22)
+	neighbor(C9, C11)
+	neighbor(C9, C12)
+	neighbor(C9, C16)
+	neighbor(C9, C22)
+	neighbor(C10, C11)
+	neighbor(C10, C14)
+	neighbor(C10, C15)
+	neighbor(C10, C22)
+	neighbor(C11, C17)
+	neighbor(C11, C18)
+	neighbor(C11, C19)
+	neighbor(C11, C20)
+	neighbor(C11, C21)
+	neighbor(C12, C23)
+	neighbor(C13, C23)
+	neighbor(C14, C23)
+	neighbor(C15, C23)
+	neighbor(C16, C23)
+	neighbor(C17, C23)
+	neighbor(C18, C23)
+	neighbor(C19, C23)
+	neighbor(C20, C23)
+	neighbor(C21, C23)
+	neighbor(C22, C23)
+}
+
+example clique {
+
+	const Country C1 C2 C3 C4 C5
+	const Color Col1 Col2 Col3 Col4 Col5
+
+	color(C1, Col1)
+	color(C2, Col2)
+	color(C3, Col3)
+	color(C4, Col4)
+	color(C5, Col1)
+
+	neighbor(C1, C2)
+    neighbor(C1, C3)
+    neighbor(C1, C4)
+    neighbor(C2, C3)
+    neighbor(C2, C4)
+    neighbor(C2, C5)
+    neighbor(C3, C4)
+    neighbor(C3, C5)
+    neighbor(C4, C5)
+}
+
+example extra1 {
+	const Country C1 C2 C3 C4 C5
+	const Color Red
+
+	color(C1,Red)
+	color(C2,Red)
+	color(C3,Red)
+	color(C4,Red)
+	color(C5,Red)
+}
+
+example extra2 {
+	const Country C1 C2 C3 C4 C5 C6
+	const Color Red Green Blue
+
+	color(C1,Red)
+	color(C2,Green)
+	color(C3,Blue)
+	color(C4,Blue)
+	color(C5,Green)
+	color(C6,Green)
+
+	neighbor(C1,C2)
+	neighbor(C1,C3)
+	neighbor(C1,C4)
+	neighbor(C1,C4)
+	neighbor(C1,C5)
+	neighbor(C1,C6)
+
+	neighbor(C2,C3)
+	neighbor(C2,C4)
+
+	neighbor(C3,C5)
+	neighbor(C3,C6)
+}

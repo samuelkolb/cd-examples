@@ -1,0 +1,39 @@
+{
+	"configurations" : {
+		"minimal" : {
+			"logic" : "coloring.logic",
+			"parameters" : {
+				"variables" : 3,
+				"literals" : 3
+			},
+			"examples" : ["benelux", "benede"]
+		}, "optimal" : {
+			"logic": "coloring.logic",
+			"parameters": {
+				"variables": 3,
+				"literals": 3
+			}
+		}, "non-symmetric" : {
+			"logic": "coloring-nonsymmetric.logic",
+			"parameters": {
+				"variables": 3,
+				"literals": 3
+			}
+		}
+	},
+	"tasks" : [
+		{
+			"configuration": "minimal",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}, {
+			"configuration": "optimal",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}, {
+			"configuration": "non-symmetric",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}
+	]
+}

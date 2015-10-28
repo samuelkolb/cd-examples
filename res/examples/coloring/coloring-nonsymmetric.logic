@@ -1,0 +1,33 @@
+type Country
+type Color
+
+pred color(Country,Color)
+pred neighbor(Country,Country)
+
+example benelux {
+	const Country Belgium Netherlands Luxembourg
+	const Color Red Green
+
+	color(Netherlands,Red)
+	color(Belgium,Green)
+	color(Luxembourg,Red)
+	neighbor(Belgium,Netherlands)
+	neighbor(Belgium,Luxembourg)
+	neighbor(Netherlands,Belgium)
+	neighbor(Luxembourg,Belgium)
+}
+
+example benede {
+	const Country Belgium Netherlands Germany
+	const Color Red Green Blue
+
+	color(Belgium,Red)
+	color(Netherlands,Green)
+	color(Germany,Blue)
+	neighbor(Belgium,Germany)
+	neighbor(Netherlands,Germany)
+	neighbor(Belgium,Netherlands)
+	neighbor(Germany,Belgium)
+	neighbor(Germany,Netherlands)
+	neighbor(Netherlands,Belgium)
+}
