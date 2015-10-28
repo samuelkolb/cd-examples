@@ -10,12 +10,11 @@ import clausal_discovery.validity.ValidatedClause;
 import idp.IdpExpressionPrinter;
 import log.LinkTransformer;
 import log.Log;
-
 import log.PrefixFilter;
+import logic.example.Example;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
 import parse.PreferenceParser;
 import parse.PrintStringParser;
 
@@ -23,10 +22,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Filter;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * A client to execute run files.
@@ -86,7 +87,17 @@ public class FileClient {
 		JSONObject parametersObject = (JSONObject) object.get("parameters");
 		int variables = (int) (long) parametersObject.get("variables");
 		int literals = (int) (long) parametersObject.get("literals");
-		return Configuration.fromFile(file, background, variables, literals);
+		Configuration parsed = Configuration.fromFile(file, background, variables, literals);
+		if(object.containsKey("examples")) {
+			Set<String> exampleSet = new HashSet<>();
+			for(Object o : ((JSONArray) object.get("examples"))) {
+				exampleSet.add((String) o);
+			}
+			Predicate<Example> p = e -> exampleSet.contains(e.getName());
+			return parsed.copy(parsed.getLogicBase().filterExamples(p));
+		} else {
+			return parsed;
+		}
 	}
 
 	protected void runTask(JSONObject object, Map<String, Configuration> configurations) {
