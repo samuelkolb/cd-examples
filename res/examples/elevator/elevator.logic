@@ -1,0 +1,40 @@
+type Person
+type Elevator
+
+pred inside(Person, Elevator)
+calc crowded(Elevator)
+pred panic(Person)
+
+example 1 {
+	const Person P1 P2 P3 P4
+	const Elevator E1 E2
+
+	inside(P1, E1)
+	inside(P2, E1)
+	inside(P3, E1)
+	inside(P4, E2)
+
+	panic(P1)
+	panic(P2)
+	panic(P3)
+}
+
+example 1 {
+	const Person P1 P2 P3 P4
+	const Elevator E1 E2
+
+	inside(P1, E1)
+	inside(P2, E1)
+	inside(P3, E1)
+	inside(P4, E2)
+}
+
+example 1 {
+	const Person P1 P2 P3 P4
+	const Elevator E1 E2
+
+	inside(P1, E1)
+	inside(P2, E1)
+	inside(P3, E2)
+	inside(P4, E2)
+}
