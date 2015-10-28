@@ -12,7 +12,7 @@
 	"tasks": [
 		{
 			"configuration": "default",
-			"type": "hard constraints",
+			"type": "constraints",
 			"print": "{number} : {constraint}"
 		}
 	]
