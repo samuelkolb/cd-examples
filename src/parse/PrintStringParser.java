@@ -19,6 +19,7 @@ public class PrintStringParser {
 
 	private class StringParser extends ScopeParser<State> {
 
+		// TODO extend parser
 		@Override
 		public List<ScopeParser<State>> getParsers() {
 			return Collections.singletonList(new KeyParser());
@@ -26,38 +27,31 @@ public class PrintStringParser {
 
 		@Override
 		public boolean activatesWith(String string, State parseState) throws ParsingError {
+			parseState.builder.append(string);
 			return true;
 		}
 
 		@Override
 		public boolean endsWith(String string, State parseState) throws ParsingError {
-			if(!string.isEmpty()) {
-				parseState.builder.append(string);
-				return false;
-			}
-			return true;
+			return false;
 		}
 	}
 
-	private class KeyParser extends ScopeParser<State> {
+	private class KeyParser extends MatchParser<State> {
 
 		@Override
-		public List<ScopeParser<State>> getParsers() {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public boolean activatesWith(String string, State parseState) throws ParsingError {
-			return string.startsWith("{");
-		}
-
-		@Override
-		public boolean endsWith(String string, State parseState) throws ParsingError {
-			if(string.endsWith("}")) {
-				String[] parts = string.split(",");
+		public boolean matches(String string, State parseState) throws ParsingError {
+			if(string.matches(".*\\{[^\\}]*\\}")) {
+				int bracketIndex = string.indexOf('{');
+				parseState.builder.append(string.substring(0, bracketIndex));
+				String match = string.substring(bracketIndex + 1, string.length() - 1);
+				String[] parts = match.split(",");
 				String key = parts[0].trim();
-				String format = parts.length >= 2 ? parts[1].trim() : "%@";
+				String format = parts.length >= 2 ? parts[1].trim() : "%s";
 				parseState.builder.append(format);
+				if(!values.containsKey(key)) {
+					throw new IllegalStateException("Missing key: " + key);
+				}
 				parseState.objects.add(values.get(key));
 				return true;
 			}

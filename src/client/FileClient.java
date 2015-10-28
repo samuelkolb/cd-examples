@@ -75,10 +75,11 @@ public class FileClient {
 	protected Configuration parseConfiguration(JSONObject object) {
 		File file = new File(this.file.getParentFile(), (String) object.get("logic"));
 		Optional<File> background = object.containsKey("background")
-				? Optional.empty()
-				: Optional.of(new File(this.file.getParentFile(), (String) object.get("background")));
-		int variables = (int) object.get("variables");
-		int literals = (int) object.get("literals");
+				? Optional.of(new File(this.file.getParentFile(), (String) object.get("background")))
+				: Optional.empty();
+		JSONObject parametersObject = (JSONObject) object.get("parameters");
+		int variables = (int) (long) parametersObject.get("variables");
+		int literals = (int) (long) parametersObject.get("literals");
 		return Configuration.fromFile(file, background, variables, literals);
 	}
 
@@ -88,10 +89,12 @@ public class FileClient {
 		String type = ((String) object.get("type")).toLowerCase();
 		if("optimization".equals(type)) {
 			runOptimization(object, configuration);
-		} else if("hard constraints".equals(type)) {
-			runHardConstraints(object, configuration);
-		} else if ("soft constraints".equals(type)) {
-			runSoftConstraints(object, configuration);
+		} else if("constraints".equals(type)) {
+			if(object.containsKey("threshold")) {
+				runSoftConstraints(object, configuration, (double) object.get("threshold"));
+			} else {
+				runHardConstraints(object, configuration);
+			}
 		}
 	}
 	protected void runOptimization(JSONObject object, Configuration configuration) {
@@ -124,8 +127,7 @@ public class FileClient {
 		}
 	}
 
-	protected void runSoftConstraints(JSONObject object, Configuration configuration) {
-		double threshold = (double) object.get("threshold");
+	protected void runSoftConstraints(JSONObject object, Configuration configuration, double threshold) {
 		List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findSoftConstraints(threshold);
 		String printString = (String) object.get("print");
 		for(int i = 0; i < clauses.size(); i++) {
