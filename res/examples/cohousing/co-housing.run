@@ -13,7 +13,7 @@
 		{
 			"configuration": "default",
 			"type": "constraints",
-			"print": "{number} : {clause}"
+			"print": " {number} : {clause}"
 		}
 	]
 }
