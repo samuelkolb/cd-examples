@@ -148,11 +148,12 @@ public class FileClient {
 		List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findSoftConstraints(threshold);
 		String printString = (String) object.get("print");
 		for(int i = 0; i < clauses.size(); i++) {
+			ValidatedClause clause = clauses.get(i);
 			Map<String, Object> values = new HashMap<>();
 			values.put("number", i + 1);
 			values.put("threshold", threshold);
-			values.put("support", clauses.get(i).getValidCount() / configuration.getLogicBase().getExamples().size());
-			values.put("clause", IdpExpressionPrinter.print(clauses.get(i).getClause().getFormula()));
+			values.put("support", (double) clause.getValidCount() / configuration.getLogicBase().getExamples().size());
+			values.put("clause", IdpExpressionPrinter.print(clause.getClause().getFormula()));
 			Log.LOG.printLine(getPrintString(printString, values));
 		}
 	}
