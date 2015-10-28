@@ -1,0 +1,48 @@
+type Row
+type Column
+type Value > int
+type Block
+
+pred value(Row, Column, Value)
+pred block(Row, Column, Block)
+
+example 1 {
+	const Row r1 r2 r3 r4
+	const Column c1 c2 c3 c4
+	const Value 1 2 3 4
+	const Block b1 b2 b3 b4
+
+	block(r1, c1, b1)
+    block(r1, c2, b1)
+    block(r1, c3, b2)
+    block(r1, c4, b2)
+    block(r2, c1, b1)
+    block(r2, c2, b1)
+    block(r2, c3, b2)
+    block(r2, c4, b2)
+    block(r3, c1, b3)
+    block(r3, c2, b3)
+    block(r3, c3, b4)
+    block(r3, c4, b4)
+    block(r4, c1, b3)
+    block(r4, c2, b3)
+    block(r4, c3, b4)
+    block(r4, c4, b4)
+
+	value(r1, c1, 1)
+	value(r1, c2, 3)
+	value(r1, c3, 2)
+	value(r1, c4, 4)
+	value(r2, c1, 4)
+	value(r2, c2, 2)
+	value(r2, c3, 3)
+	value(r2, c4, 1)
+	value(r3, c1, 2)
+	value(r3, c2, 1)
+	value(r3, c3, 4)
+	value(r3, c4, 3)
+	value(r4, c1, 3)
+	value(r4, c2, 4)
+	value(r4, c3, 1)
+	value(r4, c4, 2)
+}

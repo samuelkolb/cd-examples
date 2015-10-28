@@ -1,0 +1,40 @@
+{
+	"configurations" : {
+		"small" : {
+			"logic" : "sudoku.logic",
+			"parameters" : {
+				"variables" : 4,
+				"literals" : 4
+			},
+			"examples" : ["small"]
+		}, "mixed" : {
+			"logic": "sudoku.logic",
+			"parameters": {
+				"variables": 4,
+				"literals": 4
+			},
+			"examples" : ["small", "larger1"]
+		}, "all" : {
+			"logic": "sudoku.logic",
+			"parameters": {
+				"variables": 4,
+				"literals": 4
+			}
+		}
+	},
+	"tasks" : [
+		{
+			"configuration": "small",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}, {
+			"configuration": "mixed",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}, {
+			"configuration": "all",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}
+	]
+}

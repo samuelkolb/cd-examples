@@ -1,0 +1,68 @@
+type Cell
+type Row
+type Column
+type Value > int
+type Block
+
+pred row(Cell, Row, Column)
+pred value(Cell, Value)
+pred block(Cell, Block)
+
+example 1 {
+	const Cell cell01 cell02 cell03 cell04 cell05 cell06 cell07 cell08 cell09 cell10 cell11 cell12 cell13 cell14 cell15 cell16
+	const Row r1 r2 r3 r4
+	const Column c1 c2 c3 c4
+	const Value 1 2 3 4
+	const Block b1 b2 b3 b4
+
+	row(cell01, r1, c1)
+    row(cell02, r1, c2)
+    row(cell03, r1, c3)
+    row(cell04, r1, c4)
+    row(cell05, r2, c1)
+    row(cell06, r2, c2)
+    row(cell07, r2, c3)
+    row(cell08, r2, c4)
+    row(cell09, r3, c1)
+    row(cell10, r3, c2)
+    row(cell11, r3, c3)
+    row(cell12, r3, c4)
+    row(cell13, r4, c1)
+    row(cell14, r4, c2)
+    row(cell15, r4, c3)
+    row(cell16, r4, c4)
+
+	block(cell01, b1)
+    block(cell02, b1)
+    block(cell03, b2)
+    block(cell04, b2)
+    block(cell05, b1)
+    block(cell06, b1)
+    block(cell07, b2)
+    block(cell08, b2)
+    block(cell09, b3)
+    block(cell10, b3)
+    block(cell11, b4)
+    block(cell12, b4)
+    block(cell13, b3)
+    block(cell14, b3)
+    block(cell15, b4)
+    block(cell16, b4)
+
+	value(cell01, 1)
+	value(cell02, 3)
+	value(cell03, 2)
+	value(cell04, 4)
+	value(cell05, 4)
+	value(cell06, 2)
+	value(cell07, 3)
+	value(cell08, 1)
+	value(cell09, 2)
+	value(cell10, 1)
+	value(cell11, 4)
+	value(cell12, 3)
+	value(cell13, 3)
+	value(cell14, 4)
+	value(cell15, 1)
+	value(cell16, 2)
+}
