@@ -8,8 +8,10 @@ import clausal_discovery.core.Preferences;
 import clausal_discovery.core.score.ClauseFunction;
 import clausal_discovery.validity.ValidatedClause;
 import idp.IdpExpressionPrinter;
+import log.LinkTransformer;
 import log.Log;
 
+import log.PrefixFilter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Filter;
 
 /**
  * A client to execute run files.
@@ -54,6 +57,7 @@ public class FileClient {
 	 * Execute this clients file
 	 */
 	public void run() {
+		Log.LOG.saveState().addMessageFilter(PrefixFilter.ignore("INFO")).addTransformer(new LinkTransformer());
 		try {
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
 			JSONObject configurationsObject = (JSONObject) jsonObject.get("configurations");
@@ -69,6 +73,8 @@ public class FileClient {
 			}
 		} catch(FileNotFoundException e) {
 			throw new RuntimeException(e);
+		} finally {
+			Log.LOG.revert();
 		}
 	}
 
@@ -110,7 +116,7 @@ public class FileClient {
 			values.put("number", i + 1);
 			values.put("support", clause.getValidCount() / configuration.getLogicBase().getExamples().size());
 			values.put("weight", function.getWeights().get(i));
-			values.put("clause", IdpExpressionPrinter.print(clause.getClause().getFormula()));
+			values.put("clause", clause);
 			Log.LOG.printLine(getPrintString(printString, values));
 		}
 	}
@@ -122,7 +128,7 @@ public class FileClient {
 		for(int i = 0; i < clauses.size(); i++) {
 			Map<String, Object> values = new HashMap<>();
 			values.put("number", i + 1);
-			values.put("clause", IdpExpressionPrinter.print(clauses.get(i).getClause().getFormula()));
+			values.put("clause", clauses.get(i).getClause());
 			Log.LOG.printLine(getPrintString(printString, values));
 		}
 	}
