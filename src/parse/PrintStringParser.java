@@ -1,5 +1,7 @@
 package parse;
 
+import log.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +29,7 @@ public class PrintStringParser {
 
 		@Override
 		public boolean activatesWith(String string, State parseState) throws ParsingError {
-			parseState.builder.append(string);
-			return true;
+			return false;
 		}
 
 		@Override
@@ -69,9 +70,8 @@ public class PrintStringParser {
 	 */
 	public String parse(String string, Map<String, Object> values) {
 		this.values = values;
-		List<ScopeParser<State>> parsers = Collections.singletonList(new StringParser());
 		ParseCursor parseCursor = new ParseCursor(string);
-		State state = new BaseScopeParser<>(parsers).parse(parseCursor, new State());
+		State state = new StringParser().parse(parseCursor, new State());
 		this.values = null;
 		return String.format(state.builder.toString(), state.objects.toArray());
 	}
