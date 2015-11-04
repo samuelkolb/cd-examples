@@ -1,39 +1,39 @@
 {
-	"configurations" : {
-		"minimal" : {
-			"logic" : "coloring.logic",
-			"parameters" : {
-				"variables" : 3,
-				"literals" : 3
-			},
-			"examples" : ["benelux", "benede"]
-		}, "optimal" : {
+	"problems": {
+		"minimal": {
 			"logic": "coloring.logic",
-			"parameters": {
-				"variables": 3,
-				"literals": 3
-			}
-		}, "non-symmetric" : {
-			"logic": "coloring-nonsymmetric.logic",
-			"parameters": {
-				"variables": 3,
-				"literals": 3
-			}
+			"examples": ["benelux", "benede"]
+		},
+		"optimal": {
+			"logic": "coloring.logic"
+		},
+		"non-symmetric": {
+			"logic": "coloring-nonsymmetric.logic"
 		}
 	},
-	"tasks" : [
-		{
-			"configuration": "minimal",
-			"type": "constraints",
+	"settings": {
+		"standard": {
+			"goal": "constraints",
+			"variables": 3,
+			"literals": 3,
 			"print": "{number, % 3d} : {clause}"
-		}, {
-			"configuration": "optimal",
-			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
-		}, {
-			"configuration": "non-symmetric",
-			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
+		},
+		"minimal": {
+			"parent": "standard",
+			"problem": "minimal"
+		},
+		"optimal": {
+			"parent": "standard",
+			"problem": "optimal"
+		},
+		"non-symmetric": {
+			"parent": "standard",
+			"problem": "non-symmetric"
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn(minimal)",
+		"2": "learn(optimal)",
+		"3": "learn(non-symmetric)"
+	}
 }
