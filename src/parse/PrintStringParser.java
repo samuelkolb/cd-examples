@@ -1,6 +1,6 @@
 package parse;
 
-import log.Log;
+import vector.Vector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,14 +14,13 @@ import java.util.Map;
  */
 public class PrintStringParser {
 
-	private class State {
+	public class State {
 		public StringBuilder builder = new StringBuilder();
-		public List<Object> objects = new ArrayList<>();
+		public List<String> keys = new ArrayList<>();
 	}
 
 	private class StringParser extends ScopeParser<State> {
 
-		// TODO extend parser
 		@Override
 		public List<ScopeParser<State>> getParsers() {
 			return Collections.singletonList(new KeyParser());
@@ -50,17 +49,12 @@ public class PrintStringParser {
 				String key = parts[0].trim();
 				String format = parts.length >= 2 ? parts[1].trim() : "%s";
 				parseState.builder.append(format);
-				if(!values.containsKey(key)) {
-					throw new IllegalStateException("Missing key: " + key);
-				}
-				parseState.objects.add(values.get(key));
+				parseState.keys.add(key);
 				return true;
 			}
 			return false;
 		}
 	}
-
-	private Map<String, Object> values;
 
 	/**
 	 * Parses the string using the provided values
@@ -69,10 +63,17 @@ public class PrintStringParser {
 	 * @return	A formatted string
 	 */
 	public String parse(String string, Map<String, Object> values) {
-		this.values = values;
+		return compile(string).format(values);
+	}
+
+	/**
+	 * Compiles the given string to a print string
+	 * @param string	The string to be compiled
+	 * @return	A print string
+	 */
+	public PrintString compile(String string) {
 		ParseCursor parseCursor = new ParseCursor(string);
 		State state = new StringParser().parse(parseCursor, new State());
-		this.values = null;
-		return String.format(state.builder.toString(), state.objects.toArray());
+		return new PrintString(state.builder.toString(), new Vector<>(String.class, state.keys));
 	}
 }

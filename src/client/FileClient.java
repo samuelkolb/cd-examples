@@ -1,32 +1,48 @@
 package client;
 
 import basic.FileUtil;
+import build.Builder;
 import clausal_discovery.configuration.Configuration;
-import clausal_discovery.core.ClausalDiscovery;
-import clausal_discovery.core.ClausalOptimization;
+import clausal_discovery.core.LogicBase;
 import clausal_discovery.core.Preferences;
 import clausal_discovery.core.score.ClauseFunction;
-import clausal_discovery.validity.ValidatedClause;
-import idp.IdpExpressionPrinter;
+import client.setting.Goal;
+import client.setting.Model;
+import client.setting.Parameters;
+import client.setting.Problem;
+import client.setting.SettingParameters;
+import client.task.EfficiencyTask;
+import client.task.EvaluationTask;
+import client.task.LearningTask;
+import client.task.Task;
 import log.LinkTransformer;
 import log.Log;
 import log.PrefixFilter;
 import logic.example.Example;
+import logic.theory.FileTheory;
+import logic.theory.Theory;
+import parse.LogicParser;
+import parse.ParseException;
+import util.Weighted;
+import logic.theory.Vocabulary;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import parse.PreferenceParser;
-import parse.PrintStringParser;
+import vector.SafeList;
+import vector.SafeListBuilder;
+import vector.Vector;
+import vector.WriteOnceVector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
@@ -36,12 +52,43 @@ import java.util.function.Predicate;
  */
 public class FileClient {
 
+	private class State {
+		Map<String, Problem> problems = new HashMap<>();
+		Map<String, SettingParameters> settings = new HashMap<>();
+		Map<String, Model> models = new HashMap<>();
+		Map<String, Task> tasks = new HashMap<>();
+	}
+
+	private class DelayedEfficiencyTask implements Task {
+
+		private final State state;
+
+		private final String taskName;
+
+		private final int runs;
+
+		public DelayedEfficiencyTask(State state, String taskName, int runs) {
+			this.state = state;
+			this.taskName = taskName;
+			this.runs = runs;
+		}
+
+		@Override
+		public void run() {
+			new EfficiencyTask(state.tasks.get(taskName), runs).run();
+		}
+	}
+
 	/**
 	 * Execute the file client from command line.
 	 * @param args	{filename}
 	 */
 	public static void main(String[] args) {
-		new FileClient(new File(args[0])).run();
+		try {
+			new FileClient(new File(args[0])).run();
+		} catch(IllegalStateException e) {
+			Log.LOG.error().printLine(e.getMessage());
+		}
 	}
 
 	private File file;
@@ -61,103 +108,122 @@ public class FileClient {
 		Log.LOG.saveState().addMessageFilter(PrefixFilter.ignore("INFO")).addTransformer(new LinkTransformer());
 		try {
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
-			JSONObject configurationsObject = (JSONObject) jsonObject.get("configurations");
-			Map<String, Configuration> configurations = new HashMap<>();
-			for(Object key : configurationsObject.keySet()) {
-				String name = (String) key;
-				configurations.put(name, parseConfiguration((JSONObject) configurationsObject.get(key)));
-			}
-
-			JSONArray runObject = (JSONArray) jsonObject.get("tasks");
-			for(Object task : runObject) {
-				runTask((JSONObject) task, configurations);
-			}
+			State state = new State();
+			state.problems = parse(jsonObject, "problems", state, this::parseProblem);
+			state.models = parse(jsonObject, "models", state, this::parseModel);
+			state.settings = parse(jsonObject, "settings", state, this::parseSetting);
+			state.tasks = parse(jsonObject, "tasks", state, this::parseTask);
 		} catch(FileNotFoundException e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		} finally {
 			Log.LOG.revert();
 		}
 	}
 
-	protected Configuration parseConfiguration(JSONObject object) {
+	protected <T, J> Map<String, T> parse(JSONObject parent, String key, State state, BiFunction<J, State, T> function) {
+		JSONObject object = (JSONObject) parent.get(key);
+		Map<String, T> map = new HashMap<>();
+		for(Object k : object.keySet()) {
+			//noinspection unchecked
+			map.put((String) k, function.apply((J) object.get(k), state));
+		}
+		return map;
+	}
+
+	protected Problem parseProblem(JSONObject object, State state) {
 		File file = new File(this.file.getParentFile(), (String) object.get("logic"));
-		Optional<File> background = object.containsKey("background")
-				? Optional.of(new File(this.file.getParentFile(), (String) object.get("background")))
-				: Optional.empty();
-		JSONObject parametersObject = (JSONObject) object.get("parameters");
-		int variables = (int) (long) parametersObject.get("variables");
-		int literals = (int) (long) parametersObject.get("literals");
-		Configuration parsed = Configuration.fromFile(file, background, variables, literals);
+		try {
+			return new Problem(getLogicBase(object, file), getBackground(object));
+		} catch(ParseException e) {
+			String message = String.format("Error parsing file %s\n%s", file.getName(), e.getMessage());
+			throw new IllegalStateException(message, e);
+		}
+	}
+
+	private LogicBase getLogicBase(JSONObject object, File file) throws ParseException {
+		LogicBase logicBase = new LogicParser().parse(FileUtil.readFile(file));
 		if(object.containsKey("examples")) {
 			Set<String> exampleSet = new HashSet<>();
+			//noinspection Convert2streamapi
 			for(Object o : ((JSONArray) object.get("examples"))) {
 				exampleSet.add((String) o);
 			}
 			Predicate<Example> p = e -> exampleSet.contains(e.getName());
-			return parsed.copy(parsed.getLogicBase().filterExamples(p));
-		} else {
-			return parsed;
+			logicBase = logicBase.filterExamples(p);
 		}
+		return logicBase;
 	}
 
-	protected void runTask(JSONObject object, Map<String, Configuration> configurations) {
-		@SuppressWarnings("RedundantCast")
-		Configuration configuration = configurations.get((String) object.get("configuration"));
-		String type = ((String) object.get("type")).toLowerCase();
-		if("optimization".equals(type)) {
-			runOptimization(object, configuration);
-		} else if("constraints".equals(type)) {
-			if(object.containsKey("threshold")) {
-				runSoftConstraints(object, configuration, (double) object.get("threshold"));
-			} else {
-				runHardConstraints(object, configuration);
+	private Vector<Theory> getBackground(JSONObject object) {Optional<File> background = object.containsKey("background")
+			? Optional.of(new File(this.file.getParentFile(), (String) object.get("background")))
+			: Optional.empty();
+
+		return background.isPresent() ? new Vector<>(new FileTheory(background.get())) : new Vector<>();
+	}
+
+	protected Model parseModel(JSONArray object, State state) {
+		SafeListBuilder<Weighted<String>> builder = SafeList.build(object.size());
+		for(Object value : object) {
+			JSONArray tuple = (JSONArray) value;
+			builder.add(new Weighted<>((Double) tuple.get(0), (String) tuple.get(1)));
+		}
+		return new Model(builder.sample());
+	}
+
+	@SuppressWarnings("SuspiciousMethodCalls")
+	protected SettingParameters parseSetting(JSONObject object, State state) {
+		SettingParameters parameters = new SettingParameters();
+		// C-Value & Threshold
+		parameters.cValue.setFromJson(object, "c-value");
+		parameters.threshold.setFromJson(object, "threshold");
+
+		// Type
+		parameters.goal.set(Goal.valueOf(((String) object.get("type")).toUpperCase()));
+
+		// Variables & Literals
+		parameters.variables.setFromJson(object, "variables");
+		parameters.literals.setFromJson(object, "literals");
+
+		// Problem
+		Problem problem = state.problems.get(object.get("problem"));
+		parameters.problem.set(problem);
+
+		// Model
+		String modelKey = "model";
+		if(object.containsKey(modelKey)) {
+			parameters.model.set(state.models.get(object.get(modelKey)).getFunction(problem.getLogicBase()));
+		}
+
+		// Preferences
+		String preferencesKey = "preferences";
+		if(object.containsKey(preferencesKey)) {
+			PreferenceParser preferenceParser = new PreferenceParser(problem.getLogicBase().getExamples());
+			File file = new File(this.file.getParentFile(), (String) object.get("preferences"));
+			Preferences preferences = preferenceParser.parse(FileUtil.readFile(file));
+			parameters.preferences.set(preferences);
+		}
+
+		// Print string
+		parameters.printString.setFromJson(object, "print-string");
+
+		return parameters;
+	}
+
+	protected Task parseTask(JSONObject object, State state) {
+		String type = (String) object.get("type");
+		if("speed".equals(type)) {
+			String taskName = (String) object.get("task");
+			int runs = (int) object.get("runs");
+			return new DelayedEfficiencyTask(state, taskName, runs);
+		} else {
+			//noinspection SuspiciousMethodCalls
+			SettingParameters setting = state.settings.get(object.get("setting"));
+			if("learn".equals(type)) {
+				return new LearningTask(setting);
+			} else if("evaluate".equals(type)) {
+				return new EvaluationTask(setting);
 			}
 		}
-	}
-	protected void runOptimization(JSONObject object, Configuration configuration) {
-		PreferenceParser preferenceParser = new PreferenceParser(configuration.getLogicBase().getExamples());
-		File file = new File(this.file.getParentFile(), (String) object.get("preferences"));
-		Preferences preferences = preferenceParser.parse(FileUtil.readFile(file));
-		ClausalOptimization clausalOptimization = new ClausalOptimization(configuration);
-		ClauseFunction function = clausalOptimization.getClauseFunction(preferences, (double) object.get("c-factor"));
-		String printString = (String) object.get("print");
-		for(int i = 0; i < function.getWeights().length; i++) {
-			Map<String, Object> values = new HashMap<>();
-			ValidatedClause clause = clausalOptimization.getSoftConstraints().get(i);
-			values.put("number", i + 1);
-			values.put("support", clause.getSupportCount() / configuration.getLogicBase().getExamples().size());
-			values.put("weight", function.getWeights().get(i));
-			values.put("clause", clause);
-			Log.LOG.printLine(getPrintString(printString, values));
-		}
-	}
-
-	protected void runHardConstraints(JSONObject object, Configuration configuration) {
-		List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findHardConstraints();
-		String printString = (String) object.get("print");
-		for(int i = 0; i < clauses.size(); i++) {
-			Map<String, Object> values = new HashMap<>();
-			values.put("number", i + 1);
-			values.put("clause", clauses.get(i).getClause());
-			Log.LOG.printLine(getPrintString(printString, values));
-		}
-	}
-
-	protected void runSoftConstraints(JSONObject object, Configuration configuration, double threshold) {
-		List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findSoftConstraints(threshold);
-		String printString = (String) object.get("print");
-		for(int i = 0; i < clauses.size(); i++) {
-			ValidatedClause clause = clauses.get(i);
-			Map<String, Object> values = new HashMap<>();
-			values.put("number", i + 1);
-			values.put("threshold", threshold);
-			values.put("support", (double) clause.getSupportCount() / configuration.getLogicBase().getExamples().size());
-			values.put("clause", IdpExpressionPrinter.print(clause.getClause().getFormula()));
-			Log.LOG.printLine(getPrintString(printString, values));
-		}
-	}
-
-	protected String getPrintString(String string, Map<String, Object> values) {
-		return new PrintStringParser().parse(string, values);
+		throw new IllegalStateException("Unknown type of task: " + type);
 	}
 }
