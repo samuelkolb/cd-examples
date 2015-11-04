@@ -1,20 +1,25 @@
 {
-	"configurations" : {
-		"default" : {
-			"logic" : "activities.logic",
-			"parameters" : {
-				"variables" : 1,
-				"literals" : 2
+	"problems": {
+		"default": {
+			"logic": "activities.logic",
+			"parameters": {
+				"variables": 1,
+				"literals": 2
 			}
 		}
 	},
-	"tasks" : [
-		{
-			"configuration" : "default",
-			"preferences" : "activities.logic",
-			"c-factor" : 0.1,
-			"type" : "optimization",
-			"print" : " {weight, %.4f} : {clause}"
+	"settings": {
+		"default": {
+			"problem": "default",
+			"goal": "optimization",
+			"preferences": "activities.logic",
+			"c-factor": 0.1,
+			"variables": 1,
+			"literals": 2,
+			"print": " {weight, %.4f} : {clause}"
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn"
+	}
 }
