@@ -172,7 +172,10 @@ public class FileClient {
 
 	@SuppressWarnings("SuspiciousMethodCalls")
 	protected SettingParameters parseSetting(JSONObject object, State state) {
-		SettingParameters parameters = new SettingParameters();
+		SettingParameters parameters = object.containsKey("parent")
+			? new SettingParameters(state.settings.get(object.get("parent")))
+		    : new SettingParameters();
+
 		// C-Value & Threshold
 		parameters.cValue.setFromJson(object, "c-value");
 		parameters.threshold.setFromJson(object, "threshold");
@@ -209,15 +212,16 @@ public class FileClient {
 		return parameters;
 	}
 
-	protected Task parseTask(JSONObject object, State state) {
-		String type = (String) object.get("type");
+	protected Task parseTask(String taskString, State state) {
+		String[] parts = taskString.split("\\(");
+		parts[parts.length - 1] = parts[parts.length - 1].substring(0, parts[parts.length - 1].length() - 1);
+		String type = parts[0];
 		if("speed".equals(type)) {
-			String taskName = (String) object.get("task");
-			int runs = (int) object.get("runs");
-			return new DelayedEfficiencyTask(state, taskName, runs);
+			String[] args = parts[1].split(",");
+			return new DelayedEfficiencyTask(state, args[0], Integer.parseInt(args[1]));
 		} else {
 			//noinspection SuspiciousMethodCalls
-			SettingParameters setting = state.settings.get(object.get("setting"));
+			SettingParameters setting = state.settings.get(parts[1]);
 			if("learn".equals(type)) {
 				return new LearningTask(setting);
 			} else if("evaluate".equals(type)) {

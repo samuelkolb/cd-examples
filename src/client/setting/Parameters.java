@@ -1,6 +1,5 @@
 package client.setting;
 
-import clausal_discovery.core.score.ClauseFunction;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.NoSuchElementException;
  *
  * @author Samuel Kolb
  */
-public class Parameters {
+public abstract class Parameters {
 
 	public class Key<T> {
 
@@ -54,4 +53,15 @@ public class Parameters {
 	}
 
 	private Map<Key, Object> values = new HashMap<>();
+
+	/**
+	 * Creates a new parameters object.
+	 */
+	public Parameters() {
+
+	}
+
+	protected Parameters(Parameters parameters) {
+		this.values.putAll(parameters.values);
+	}
 }

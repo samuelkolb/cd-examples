@@ -28,4 +28,18 @@ public class SettingParameters extends Parameters {
 	public final Key<Goal> goal = new Key<>();
 
 	public final Key<Preferences> preferences = new Key<>();
+
+	/**
+	 * Creates a new setting parameters object
+	 */
+	public SettingParameters() {
+	}
+
+	/**
+	 * Creates a new setting parameters object, initialized with parameters from the given object
+	 * @param parameters	The initial parameters
+	 */
+	public SettingParameters(Parameters parameters) {
+		super(parameters);
+	}
 }
