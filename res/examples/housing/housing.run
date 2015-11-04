@@ -1,20 +1,14 @@
 {
-	"configurations": {
+	"problems": {
 		"housing": {
 			"logic": "housing.logic",
-			"background": "housing.background",
-			"parameters": {
-				"variables": 4,
-				"literals": 4
-			}
-		}, "housing-opt": {
-			"logic": "housing-opt.logic",
-			"parameters": {
-				"variables": 4,
-				"literals": 3
-			}
+			"background": "housing.background"
+		},
+		"housing-opt": {
+			"logic": "housing-opt.logic"
 		}
-	}, "models": {
+	},
+	"models": {
 		"standard": [
 			[0.5, "live_in(0) => low_crime(0)"],
 			[0.25, "work_in(0) => school_in(0)"],
@@ -25,17 +19,36 @@
 			[0.5, "live_in(0) & school_in(1) => false"],
 			[0.5, "live_in(0) & work_in(1) => false"]
 		]
-	}, "tasks": [
-		{
-			"configuration": "housing",
-			"type": "constraints",
+	},
+	"settings": {
+		"housing": {
+			"problem": "housing",
+			"goal": "constraints",
+			"variables": 4,
+			"literals": 4,
 			"print": "{number, % 3d} : {clause}"
-		}, {
-			"configuration": "housing-opt",
-			"preferences" : "housing-opt.logic",
-			"type": "optimization",
-			"c-factor" : 0.1,
-			"print" : " {weight, %.4f} : {clause}"
+		},
+		"housing-opt": {
+			"problem": "housing-opt",
+			"goal": "optimization",
+			"preferences": "housing-opt.logic",
+			"c-factor": 0.1,
+			"variables": 4,
+			"literals": 3,
+			"print": " {weight, %.4f} : {clause}"
+		},
+		"standard": {
+			"parent": "housing-opt",
+			"model": "standard"
+		},
+		"disconnected": {
+			"parent": "housing-opt",
+			"model": "disconnected"
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn(housing)",
+		"2": "evaluate(standard)",
+		"3": "evaluate(disconnected)"
+	}
 }
