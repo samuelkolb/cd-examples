@@ -1,0 +1,29 @@
+type Area
+
+pred live_in(Area)
+pred low_crime(Area)
+pred school_in(Area)
+pred work_in(Area)
+pred cheap(Area)
+pred job_offer(Area)
+
+generate ex$n {
+
+	#1 A1 A2 A3
+	#2 A1 A2
+	#3 A1 A2 A3
+
+	const Area A1 A2 A3
+	low_crime(A1)
+	low_crime(A2)
+
+	cheap(A1)
+	cheap(A3)
+
+	job_offer(A1)
+	job_offer(A2)
+
+	live_in($1)
+	work_in($2)
+	school_in($3)
+}

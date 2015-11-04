@@ -125,13 +125,12 @@ public class FileClient {
 			Map<String, Object> values = new HashMap<>();
 			ValidatedClause clause = clausalOptimization.getSoftConstraints().get(i);
 			values.put("number", i + 1);
-			values.put("support", clause.getValidCount() / configuration.getLogicBase().getExamples().size());
+			values.put("support", clause.getSupportCount() / configuration.getLogicBase().getExamples().size());
 			values.put("weight", function.getWeights().get(i));
 			values.put("clause", clause);
 			Log.LOG.printLine(getPrintString(printString, values));
 		}
 	}
-
 
 	protected void runHardConstraints(JSONObject object, Configuration configuration) {
 		List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findHardConstraints();
@@ -152,7 +151,7 @@ public class FileClient {
 			Map<String, Object> values = new HashMap<>();
 			values.put("number", i + 1);
 			values.put("threshold", threshold);
-			values.put("support", (double) clause.getValidCount() / configuration.getLogicBase().getExamples().size());
+			values.put("support", (double) clause.getSupportCount() / configuration.getLogicBase().getExamples().size());
 			values.put("clause", IdpExpressionPrinter.print(clause.getClause().getFormula()));
 			Log.LOG.printLine(getPrintString(printString, values));
 		}

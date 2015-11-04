@@ -1,0 +1,41 @@
+{
+	"configurations": {
+		"housing": {
+			"logic": "housing.logic",
+			"background": "housing.background",
+			"parameters": {
+				"variables": 4,
+				"literals": 4
+			}
+		}, "housing-opt": {
+			"logic": "housing-opt.logic",
+			"parameters": {
+				"variables": 4,
+				"literals": 3
+			}
+		}
+	}, "models": {
+		"standard": [
+			[0.5, "live_in(0) => low_crime(0)"],
+			[0.25, "work_in(0) => school_in(0)"],
+			[1.0, "school_in(0) => low_crime(0)"],
+			[-1.0, "live_in(0) & cheap(0) => false"]
+		],
+		"disconnected": [
+			[0.5, "live_in(0) & school_in(1) => false"],
+			[0.5, "live_in(0) & work_in(1) => false"]
+		]
+	}, "tasks": [
+		{
+			"configuration": "housing",
+			"type": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		}, {
+			"configuration": "housing-opt",
+			"preferences" : "housing-opt.logic",
+			"type": "optimization",
+			"c-factor" : 0.1,
+			"print" : " {weight, %.4f} : {clause}"
+		}
+	]
+}

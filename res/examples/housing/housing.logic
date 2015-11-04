@@ -1,0 +1,104 @@
+type Area
+type Person
+// type Cost > int
+
+pred in_area(Person, Area)
+pred low_crime(Area)
+// pred high_crime(Area)
+pred work(Person, Area)
+pred school(Person, Area)
+pred car(Person)
+
+// pred cost(Area, Cost)
+
+// calc cheap(Cost)
+// calc okay(Cost)
+// calc expensive(Cost)
+
+// work(P, A2)
+// car(P)
+// has_school(A2)
+
+example 1 {
+	const Area A1 A2
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+
+	work(P, A2)
+	school(P, A1)
+	car(P)
+}
+
+example 2 {
+	const Area A1 A2
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A2)
+
+	work(P, A2)
+	school(P, A2)
+	car(P)
+}
+
+example 3 {
+	const Area A1 A2 A3
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+	low_crime(A2)
+	low_crime(A3)
+
+	work(P, A1)
+	school(P, A1)
+	car(P)
+}
+
+example 4 {
+	const Area A1
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+	school(P, A1)
+	work(P, A1)
+}
+
+example 5 {
+	const Area A1 A2
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+	low_crime(A2)
+	school(P, A2)
+	work(P, A2)
+	car(P)
+}
+
+example 6 {
+	const Area A1 A2
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+	low_crime(A2)
+	school(P, A1)
+	work(P, A2)
+	car(P)
+}
+
+example 7 {
+	const Area A1 A2
+	const Person P
+
+	in_area(P, A1)
+	low_crime(A1)
+	low_crime(A2)
+	school(P, A2)
+	work(P, A2)
+	car(P)
+}
