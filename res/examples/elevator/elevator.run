@@ -1,20 +1,21 @@
 {
-	"configurations": {
+	"problems": {
 		"default": {
 			"logic": "elevator.logic",
-			"background": "elevator.background",
-			"parameters": {
-				"variables": 4,
-				"literals": 3
-			}
+			"background": "elevator.background"
 		}
 	},
-	"tasks": [
-		{
-			"configuration": "default",
-			"type": "constraints",
+	"setting": {
+		"default": {
+			"problem": "default",
+			"goal": "constraints",
+			"variables": 4,
+			"literals": 3,
 			"threshold" : 0.5,
 			"print": "{support, %.3f} : {clause}"
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn(default)"
+	}
 }
