@@ -1,19 +1,20 @@
 {
-	"configurations": {
+	"problems": {
 		"default": {
 			"logic": "co-housing.logic",
-			"background": "co-housing.background",
-			"parameters": {
-				"variables": 4,
-				"literals": 4
-			}
+			"background": "co-housing.background"
 		}
 	},
-	"tasks": [
-		{
-			"configuration": "default",
-			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
+	"settings": {
+		"default": {
+			"problem": "default",
+			"goal": "constraints",
+			"print": "{number, % 3d} : {clause}",
+			"variables": 4,
+			"literals": 4
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn(default)"
+	}
 }
