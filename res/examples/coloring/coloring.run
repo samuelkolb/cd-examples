@@ -8,7 +8,7 @@
 			"logic": "coloring.logic"
 		},
 		"non-symmetric": {
-			"logic": "coloring-nonsymmetric.logic"
+			"logic": "coloring-non-symmetric.logic"
 		}
 	},
 	"settings": {
