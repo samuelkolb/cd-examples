@@ -1,40 +1,40 @@
 {
-	"configurations" : {
-		"small" : {
-			"logic" : "sudoku.logic",
-			"parameters" : {
-				"variables" : 4,
-				"literals" : 4
-			},
-			"examples" : ["small"]
-		}, "mixed" : {
+	"problems": {
+		"small": {
 			"logic": "sudoku.logic",
-			"parameters": {
-				"variables": 4,
-				"literals": 4
-			},
-			"examples" : ["small", "larger1"]
-		}, "all" : {
+			"examples": ["small"]
+		},
+		"mixed": {
 			"logic": "sudoku.logic",
-			"parameters": {
-				"variables": 4,
-				"literals": 4
-			}
+			"examples": ["small", "larger1"]
+		},
+		"all": {
+			"logic": "sudoku.logic"
 		}
 	},
-	"tasks" : [
-		{
-			"configuration": "small",
+	"settings": {
+		"general": {
 			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
-		}, {
-			"configuration": "mixed",
-			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
-		}, {
-			"configuration": "all",
-			"type": "constraints",
-			"print": "{number, % 3d} : {clause}"
+			"print": "{number, % 3d} : {clause}",
+			"variables": 4,
+			"literals": 4
+		},
+		"small": {
+			"parent": "general",
+			"problem": "small"
+		},
+		"mixed": {
+			"parent": "general",
+			"problem": "mixed"
+		},
+		"all": {
+			"parent": "general",
+			"problem": "all"
 		}
-	]
+	},
+	"tasks": {
+		"1": "learn(small)",
+		"2": "learn(mixed)",
+		"3": "learn(all)"
+	}
 }
