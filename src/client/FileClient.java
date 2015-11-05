@@ -17,13 +17,13 @@ import log.PrefixFilter;
 import logic.example.Example;
 import logic.theory.FileTheory;
 import logic.theory.Theory;
-import parse.LogicParser;
-import parse.ParseException;
-import util.Weighted;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import parse.LogicParser;
+import parse.ParseException;
 import parse.PreferenceParser;
+import util.Weighted;
 import vector.SafeList;
 import vector.SafeListBuilder;
 import vector.Vector;
@@ -108,7 +108,13 @@ public class FileClient {
 			State state = new State();
 			parse(jsonObject, "problems", state, state.problems, this::parseProblem);
 			parse(jsonObject, "models", state, state.models, this::parseModel);
-			parse(jsonObject, "settings", state, state.settings, this::parseSetting);
+			if(jsonObject.containsKey("settings")) {
+				JSONObject object = (JSONObject) jsonObject.get("settings");
+				for(Object keyObject : object.keySet()) {
+					parseSetting((String) keyObject, object, state);
+				}
+			}
+
 			parse(jsonObject, "tasks", state, state.tasks, this::parseTask);
 			for(String taskName : state.tasks.keySet()) {
 				Log.LOG.formatLine("Running task: %s", taskName).printLine("----------");
@@ -176,12 +182,17 @@ public class FileClient {
 	}
 
 	@SuppressWarnings("SuspiciousMethodCalls")
-	protected SettingParameters parseSetting(JSONObject object, State state) {
+	protected void parseSetting(String key, JSONObject parentObject, State state) {
+		JSONObject object = (JSONObject) parentObject.get(key);
 		SettingParameters parameters;
 		if(object.containsKey("parent")) {
 			Object parent = object.get("parent");
 			if(!state.settings.containsKey(parent)) {
-				throw new IllegalStateException(String.format("Parent does not exist: %s", parent));
+				if(parentObject.containsKey(parent)) {
+					parseSetting((String) parent, parentObject, state);
+				} else {
+					throw new IllegalStateException(String.format("Parent does not exist: %s", parent));
+				}
 			}
 			parameters = new SettingParameters(state.settings.get(parent));
 		} else {
@@ -225,7 +236,7 @@ public class FileClient {
 
 		// Print string
 		parameters.printString.setOptional(fromJson(object, "print"));
-		return parameters;
+		state.settings.put(key, parameters);
 	}
 
 	protected <T> Optional<T> fromJson(JSONObject object, String key) {
