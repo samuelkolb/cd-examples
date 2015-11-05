@@ -41,6 +41,6 @@ public class EfficiencyTask implements Task {
 		Log.LOG.revert().printLine(Arrays.toString(times));
 		Statistics stats = new Statistics(times);
 		Log.LOG.formatLine("Runs: %d, Mean: %f, StdDev: %f, Max: %f, Min: %f",
-				stats.getSize(), stats.getMean(), stats.getStdDev(), stats.getMax(), stats.getMin());
+				stats.getSize(), stats.getMean(), stats.getStdDev(), stats.getMax(), stats.getMin()).revert();
 	}
 }

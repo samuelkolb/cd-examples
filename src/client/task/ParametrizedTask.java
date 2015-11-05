@@ -41,7 +41,6 @@ public abstract class ParametrizedTask implements Task {
 
 	protected <T> void printResult(String printString, List<T> results, Extractor<T> extractor) {
 		PrintString compiledString = new PrintStringParser().compile(printString);
-		Log.LOG.newLine().printLine("--- Results ---");
 		for(int i = 0; i < results.size(); i++) {
 			Map<String, Object> map = new HashMap<>();
 			for(String key : compiledString.getKeySet()) {

@@ -8,6 +8,7 @@ import clausal_discovery.core.score.ClauseFunction;
 import clausal_discovery.validity.ValidatedClause;
 import client.setting.Goal;
 import client.setting.SettingParameters;
+import log.Log;
 import pair.Pair;
 
 import java.util.ArrayList;

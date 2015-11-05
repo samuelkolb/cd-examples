@@ -84,6 +84,7 @@ public class FileClient {
 		try {
 			Optional<String[]> tasks = args.length > 1 ? Optional.of(ArrayUtil.removeElement(args, 0)) : Optional.empty();
 			FileClient client = new FileClient(new File(args[0]), tasks);
+			client.run();
 		} catch(IllegalStateException e) {
 			Log.LOG.error().printLine(e.getMessage());
 			e.printStackTrace();
@@ -108,7 +109,6 @@ public class FileClient {
 	 * Execute this clients file
 	 */
 	public void run() {
-		Log.LOG.saveState().addTransformer(new LinkTransformer());
 		try {
 			Log.LOG.addMessageFilter(PrefixFilter.ignore("INFO").and(PrefixFilter.ignore("CLIENT INFO")));
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
