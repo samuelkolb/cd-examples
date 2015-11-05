@@ -14,7 +14,7 @@
 	},
 	"settings": {
 		"general": {
-			"type": "constraints",
+			"goal": "constraints",
 			"print": "{number, % 3d} : {clause}",
 			"variables": 4,
 			"literals": 4
