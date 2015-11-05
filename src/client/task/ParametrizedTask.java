@@ -2,12 +2,9 @@ package client.task;
 
 import clausal_discovery.configuration.Configuration;
 import clausal_discovery.core.LogicBase;
-import client.setting.Parameters;
 import client.setting.SettingParameters;
-import idp.program.Function;
 import log.Log;
 import logic.theory.Theory;
-import org.json.simple.JSONObject;
 import parse.PrintString;
 import parse.PrintStringParser;
 import vector.Vector;
@@ -25,7 +22,7 @@ public abstract class ParametrizedTask implements Task {
 
 	interface Extractor<T> {
 
-		String extract(int index, T object, String key);
+		Object extract(int index, T object, String key);
 	}
 
 	private final SettingParameters parameters;
@@ -44,6 +41,7 @@ public abstract class ParametrizedTask implements Task {
 
 	protected <T> void printResult(String printString, List<T> results, Extractor<T> extractor) {
 		PrintString compiledString = new PrintStringParser().compile(printString);
+		Log.LOG.newLine().printLine("--- Results ---");
 		for(int i = 0; i < results.size(); i++) {
 			Map<String, Object> map = new HashMap<>();
 			for(String key : compiledString.getKeySet()) {
@@ -55,8 +53,8 @@ public abstract class ParametrizedTask implements Task {
 
 	protected Configuration getConfiguration() {LogicBase logicBase = getParameters().problem.get().getLogicBase();
 		Vector<Theory> theories = getParameters().problem.get().getBackgroundTheories();
-		int variables = getParameters().variables.get();
-		int literals = getParameters().literals.get();
+		int variables = (int) (long) getParameters().variables.get();
+		int literals = (int) (long) getParameters().literals.get();
 		return new Configuration(logicBase, theories, variables, literals);
 	}
 }

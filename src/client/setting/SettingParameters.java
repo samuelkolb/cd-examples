@@ -2,7 +2,7 @@ package client.setting;
 
 import clausal_discovery.core.Preferences;
 import clausal_discovery.core.score.ClauseFunction;
-import parse.PrintString;
+import configuration.Parameters;
 
 /**
  * Created by samuelkolb on 03/11/15.
@@ -11,23 +11,23 @@ import parse.PrintString;
  */
 public class SettingParameters extends Parameters {
 
-	public final Key<Integer> variables = new Key<>();
+	public final Key<Long> variables = makeKey();
 
-	public final Key<Integer> literals = new Key<>();
+	public final Key<Long> literals = makeKey();
 
-	public final Key<Double> threshold = new Key<>();
+	public final Key<Double> threshold = makeKey();
 
-	public final Key<Double> cValue = new Key<>();
+	public final Key<Double> cValue = makeKey();
 
-	public final Key<ClauseFunction> model = new Key<>();
+	public final Key<ClauseFunction> model = makeKey();
 
-	public final Key<Problem> problem = new Key<>();
+	public final Key<Problem> problem = makeKey();
 
-	public final Key<String> printString = new Key<>();
+	public final Key<String> printString = makeKey();
 
-	public final Key<Goal> goal = new Key<>();
+	public final Key<Goal> goal = makeKey();
 
-	public final Key<Preferences> preferences = new Key<>();
+	public final Key<Preferences> preferences = makeKey();
 
 	/**
 	 * Creates a new setting parameters object
@@ -39,7 +39,7 @@ public class SettingParameters extends Parameters {
 	 * Creates a new setting parameters object, initialized with parameters from the given object
 	 * @param parameters	The initial parameters
 	 */
-	public SettingParameters(Parameters parameters) {
+	public SettingParameters(SettingParameters parameters) {
 		super(parameters);
 	}
 }

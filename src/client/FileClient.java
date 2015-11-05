@@ -1,14 +1,10 @@
 package client;
 
 import basic.FileUtil;
-import build.Builder;
-import clausal_discovery.configuration.Configuration;
 import clausal_discovery.core.LogicBase;
 import clausal_discovery.core.Preferences;
-import clausal_discovery.core.score.ClauseFunction;
 import client.setting.Goal;
 import client.setting.Model;
-import client.setting.Parameters;
 import client.setting.Problem;
 import client.setting.SettingParameters;
 import client.task.EfficiencyTask;
@@ -24,7 +20,6 @@ import logic.theory.Theory;
 import parse.LogicParser;
 import parse.ParseException;
 import util.Weighted;
-import logic.theory.Vocabulary;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -32,13 +27,13 @@ import parse.PreferenceParser;
 import vector.SafeList;
 import vector.SafeListBuilder;
 import vector.Vector;
-import vector.WriteOnceVector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -56,7 +51,7 @@ public class FileClient {
 		Map<String, Problem> problems = new HashMap<>();
 		Map<String, SettingParameters> settings = new HashMap<>();
 		Map<String, Model> models = new HashMap<>();
-		Map<String, Task> tasks = new HashMap<>();
+		Map<String, Task> tasks = new LinkedHashMap<>();
 	}
 
 	private class DelayedEfficiencyTask implements Task {
@@ -88,6 +83,7 @@ public class FileClient {
 			new FileClient(new File(args[0])).run();
 		} catch(IllegalStateException e) {
 			Log.LOG.error().printLine(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -105,14 +101,20 @@ public class FileClient {
 	 * Execute this clients file
 	 */
 	public void run() {
-		Log.LOG.saveState().addMessageFilter(PrefixFilter.ignore("INFO")).addTransformer(new LinkTransformer());
+		Log.LOG.saveState().addTransformer(new LinkTransformer());
 		try {
+			Log.LOG.addMessageFilter(PrefixFilter.ignore("INFO").and(PrefixFilter.ignore("CLIENT INFO")));
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
 			State state = new State();
-			state.problems = parse(jsonObject, "problems", state, this::parseProblem);
-			state.models = parse(jsonObject, "models", state, this::parseModel);
-			state.settings = parse(jsonObject, "settings", state, this::parseSetting);
-			state.tasks = parse(jsonObject, "tasks", state, this::parseTask);
+			parse(jsonObject, "problems", state, state.problems, this::parseProblem);
+			parse(jsonObject, "models", state, state.models, this::parseModel);
+			parse(jsonObject, "settings", state, state.settings, this::parseSetting);
+			parse(jsonObject, "tasks", state, state.tasks, this::parseTask);
+			for(String taskName : state.tasks.keySet()) {
+				Log.LOG.formatLine("Running task: %s", taskName).printLine("----------");
+				state.tasks.get(taskName).run();
+				Log.LOG.newLine();
+			}
 		} catch(FileNotFoundException e) {
 			throw new IllegalStateException(e);
 		} finally {
@@ -120,14 +122,17 @@ public class FileClient {
 		}
 	}
 
-	protected <T, J> Map<String, T> parse(JSONObject parent, String key, State state, BiFunction<J, State, T> function) {
-		JSONObject object = (JSONObject) parent.get(key);
-		Map<String, T> map = new HashMap<>();
-		for(Object k : object.keySet()) {
-			//noinspection unchecked
-			map.put((String) k, function.apply((J) object.get(k), state));
+	protected <T, J> void parse(JSONObject parent, String key, State state, Map<String, T> map,
+										  BiFunction<J, State, T> function) {
+		Log.LOG.printLine("CLIENT INFO\tParsing " + key);
+		if(parent.containsKey(key)) {
+			JSONObject object = (JSONObject) parent.get(key);
+			for(Object k : object.keySet()) {
+				Log.LOG.printLine("CLIENT INFO\t\tParsing " + k);
+				//noinspection unchecked
+				map.put((String) k, function.apply((J) object.get(k), state));
+			}
 		}
-		return map;
 	}
 
 	protected Problem parseProblem(JSONObject object, State state) {
@@ -172,34 +177,46 @@ public class FileClient {
 
 	@SuppressWarnings("SuspiciousMethodCalls")
 	protected SettingParameters parseSetting(JSONObject object, State state) {
-		SettingParameters parameters = object.containsKey("parent")
-			? new SettingParameters(state.settings.get(object.get("parent")))
-		    : new SettingParameters();
+		SettingParameters parameters;
+		if(object.containsKey("parent")) {
+			Object parent = object.get("parent");
+			if(!state.settings.containsKey(parent)) {
+				throw new IllegalStateException(String.format("Parent does not exist: %s", parent));
+			}
+			parameters = new SettingParameters(state.settings.get(parent));
+		} else {
+			parameters = new SettingParameters();
+		}
 
 		// C-Value & Threshold
-		parameters.cValue.setFromJson(object, "c-value");
-		parameters.threshold.setFromJson(object, "threshold");
+		parameters.cValue.setOptional(fromJson(object, "c-value"));
+		parameters.threshold.setOptional(fromJson(object, "threshold"));
 
 		// Type
-		parameters.goal.set(Goal.valueOf(((String) object.get("type")).toUpperCase()));
+		if(object.containsKey("goal")) {
+			parameters.goal.set(Goal.valueOf(((String) object.get("goal")).toUpperCase()));
+		}
 
 		// Variables & Literals
-		parameters.variables.setFromJson(object, "variables");
-		parameters.literals.setFromJson(object, "literals");
+		parameters.variables.setOptional(fromJson(object, "variables"));
+		parameters.literals.setOptional(fromJson(object, "literals"));
 
 		// Problem
-		Problem problem = state.problems.get(object.get("problem"));
-		parameters.problem.set(problem);
+		if(object.containsKey("problem")) {
+			parameters.problem.set(state.problems.get(object.get("problem")));
+		}
 
-		// Model
+				// Model
 		String modelKey = "model";
 		if(object.containsKey(modelKey)) {
+			Problem problem = parameters.problem.get();
 			parameters.model.set(state.models.get(object.get(modelKey)).getFunction(problem.getLogicBase()));
 		}
 
 		// Preferences
 		String preferencesKey = "preferences";
 		if(object.containsKey(preferencesKey)) {
+			Problem problem = parameters.problem.get();
 			PreferenceParser preferenceParser = new PreferenceParser(problem.getLogicBase().getExamples());
 			File file = new File(this.file.getParentFile(), (String) object.get("preferences"));
 			Preferences preferences = preferenceParser.parse(FileUtil.readFile(file));
@@ -207,9 +224,17 @@ public class FileClient {
 		}
 
 		// Print string
-		parameters.printString.setFromJson(object, "print-string");
-
+		parameters.printString.setOptional(fromJson(object, "print"));
 		return parameters;
+	}
+
+	protected <T> Optional<T> fromJson(JSONObject object, String key) {
+		if(object.containsKey(key)) {
+			//noinspection unchecked
+			return Optional.of((T) object.get(key));
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	protected Task parseTask(String taskString, State state) {

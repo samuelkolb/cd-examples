@@ -39,7 +39,7 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 		List<ValidatedClause> clauses = new ClausalDiscovery(getConfiguration()).findHardConstraints();
 		printResult(getParameters().printString.get(), clauses, (index, object, key) -> {
 			if("number".equals(key)) {
-				return Integer.toString(index + 1);
+				return index + 1;
 			} else if("clause".equals(key)) {
 				return object.getClause().toString();
 			}
@@ -55,13 +55,13 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 		final List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findSoftConstraints(threshold);
 		printResult(getParameters().printString.get(), clauses, (index, object, key) -> {
 			if("number".equals(key)) {
-				return Integer.toString(index + 1);
+				return index + 1;
 			} else if("clause".equals(key)) {
 				return object.getClause().toString();
 			} else if("threshold".equals(key)) {
-				return Double.toString(threshold);
+				return threshold;
 			} else if("support".equals(key)) {
-				return Double.toString(object.getSupport());
+				return object.getSupport();
 			}
 			throw new NoSuchElementException("No value for key: " + key);
 		});
@@ -82,13 +82,13 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 		}
 		printResult(getParameters().printString.get(), result, (index, object, key) -> {
 			if("number".equals(key)) {
-				return Integer.toString(index + 1);
+				return index + 1;
 			} else if("clause".equals(key)) {
 				return object.getSecond().getClause().toString();
 			} else if("support".equals(key)) {
-				return Double.toString(object.getSecond().getSupport());
+				return object.getSecond().getSupport();
 			} else if("weight".equals(key)) {
-				return Double.toString(object.getFirst());
+				return object.getFirst();
 			}
 			throw new NoSuchElementException("No value for key: " + key);
 		});
