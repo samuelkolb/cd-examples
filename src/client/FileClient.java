@@ -129,7 +129,12 @@ public class FileClient {
 			parse(jsonObject, "tasks", state, state.tasks, this::parseTask);
 			for(String taskName : this.tasks.orElse(state.tasks.keySet())) {
 				Log.LOG.formatLine("Running task: %s", taskName).printLine("----------");
-				state.tasks.get(taskName).run();
+				if(state.tasks.containsKey(taskName)) {
+					state.tasks.get(taskName).run();
+				} else {
+					Task task = parseTask(taskName, state);
+					task.run();
+				}
 				Log.LOG.newLine();
 			}
 		} catch(FileNotFoundException e) {

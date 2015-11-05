@@ -37,7 +37,9 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 
 	@Override
 	public Void visitConstraints() {
+		Log.LOG.saveState().off();
 		List<ValidatedClause> clauses = new ClausalDiscovery(getConfiguration()).findHardConstraints();
+		Log.LOG.revert();
 		printResult(getParameters().printString.get(), clauses, (index, object, key) -> {
 			if("number".equals(key)) {
 				return index + 1;
@@ -51,9 +53,11 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 
 	@Override
 	public Void visitSoftConstraints() {
+		Log.LOG.saveState().off();
 		final double threshold = getParameters().threshold.get();
 		final Configuration configuration = getConfiguration();
 		final List<ValidatedClause> clauses = new ClausalDiscovery(configuration).findSoftConstraints(threshold);
+		Log.LOG.revert();
 		printResult(getParameters().printString.get(), clauses, (index, object, key) -> {
 			if("number".equals(key)) {
 				return index + 1;
@@ -71,6 +75,7 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 
 	@Override
 	public Void visitOptimization() {
+		Log.LOG.saveState().off();
 		Preferences preferences = getParameters().preferences.get();
 		ClausalOptimization clausalOptimization = new ClausalOptimization(getConfiguration());
 		ClauseFunction function = clausalOptimization.getClauseFunction(preferences, getParameters().cValue.get());
@@ -81,6 +86,7 @@ public class LearningTask extends ParametrizedTask implements Goal.GoalVisitor<V
 		for(int i = 0; i < clausalOptimization.getSoftConstraints().size(); i++) {
 			result.add(Pair.of(function.getWeights().get(i), clausalOptimization.getSoftConstraints().get(i)));
 		}
+		Log.LOG.revert();
 		printResult(getParameters().printString.get(), result, (index, object, key) -> {
 			if("number".equals(key)) {
 				return index + 1;
