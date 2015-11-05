@@ -5,10 +5,10 @@
 			"background": "elevator.background"
 		}
 	},
-	"setting": {
+	"settings": {
 		"default": {
 			"problem": "default",
-			"goal": "constraints",
+			"goal": "soft_constraints",
 			"variables": 4,
 			"literals": 3,
 			"threshold" : 0.5,
