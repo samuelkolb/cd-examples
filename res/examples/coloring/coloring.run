@@ -34,6 +34,8 @@
 	"tasks": {
 		"1": "learn(minimal)",
 		"2": "learn(optimal)",
-		"3": "learn(non-symmetric)"
+		"3": "learn(non-symmetric)",
+		"4": "speed(1, 2)",
+		"5": "speed(3, 2)"
 	}
 }
