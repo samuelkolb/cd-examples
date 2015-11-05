@@ -2,6 +2,7 @@ package client.task;
 
 import log.Log;
 import time.Stopwatch;
+import util.Statistics;
 
 import java.util.Arrays;
 
@@ -12,6 +13,7 @@ import java.util.Arrays;
  */
 public class EfficiencyTask implements Task {
 
+	public static final double MS = 1000.0;
 	private final Task task;
 
 	private final int runs;
@@ -30,11 +32,15 @@ public class EfficiencyTask implements Task {
 	public void run() {
 		Stopwatch stopwatch = new Stopwatch();
 		double[] times = new double[runs];
+		Log.LOG.saveState().off();
 		for(int i = 0; i < runs; i++) {
 			stopwatch.start();
 			task.run();
-			times[i] = stopwatch.stop();
+			times[i] = stopwatch.stop() / MS;
 		}
-		Log.LOG.printLine(Arrays.toString(times));
+		Log.LOG.revert().printLine(Arrays.toString(times));
+		Statistics stats = new Statistics(times);
+		Log.LOG.formatLine("Runs: %d, Mean: %f, StdDev: %f, Max: %f, Min: %f",
+				stats.getSize(), stats.getMean(), stats.getStdDev(), stats.getMax(), stats.getMin());
 	}
 }

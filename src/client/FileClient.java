@@ -1,5 +1,6 @@
 package client;
 
+import basic.ArrayUtil;
 import basic.FileUtil;
 import clausal_discovery.core.LogicBase;
 import clausal_discovery.core.Preferences;
@@ -31,6 +32,7 @@ import vector.Vector;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -80,21 +82,26 @@ public class FileClient {
 	 */
 	public static void main(String[] args) {
 		try {
-			new FileClient(new File(args[0])).run();
+			Optional<String[]> tasks = args.length > 1 ? Optional.of(ArrayUtil.removeElement(args, 0)) : Optional.empty();
+			FileClient client = new FileClient(new File(args[0]), tasks);
 		} catch(IllegalStateException e) {
 			Log.LOG.error().printLine(e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
-	private File file;
+	private final File file;
+
+	private final Optional<Set<String>> tasks;
 
 	/**
 	 * FileClient constructor
-	 * @param file	The file to load and parse
+	 * @param file    The file to load and parse
+	 * @param tasks    The tasks to run
 	 */
-	public FileClient(File file) {
+	public FileClient(File file, Optional<String[]> tasks) {
 		this.file = file;
+		this.tasks = tasks.map(array -> new HashSet<>(Arrays.asList(array)));
 	}
 
 	/**
@@ -108,15 +115,19 @@ public class FileClient {
 			State state = new State();
 			parse(jsonObject, "problems", state, state.problems, this::parseProblem);
 			parse(jsonObject, "models", state, state.models, this::parseModel);
+
 			if(jsonObject.containsKey("settings")) {
 				JSONObject object = (JSONObject) jsonObject.get("settings");
 				for(Object keyObject : object.keySet()) {
-					parseSetting((String) keyObject, object, state);
+					String key = (String) keyObject;
+					if(!state.settings.containsKey(key)) {
+						parseSetting(key, object, state);
+					}
 				}
 			}
 
 			parse(jsonObject, "tasks", state, state.tasks, this::parseTask);
-			for(String taskName : state.tasks.keySet()) {
+			for(String taskName : this.tasks.orElse(state.tasks.keySet())) {
 				Log.LOG.formatLine("Running task: %s", taskName).printLine("----------");
 				state.tasks.get(taskName).run();
 				Log.LOG.newLine();
@@ -254,7 +265,7 @@ public class FileClient {
 		String type = parts[0];
 		if("speed".equals(type)) {
 			String[] args = parts[1].split(",");
-			return new DelayedEfficiencyTask(state, args[0], Integer.parseInt(args[1]));
+			return new DelayedEfficiencyTask(state, args[0], Integer.parseInt(args[1].trim()));
 		} else {
 			//noinspection SuspiciousMethodCalls
 			SettingParameters setting = state.settings.get(parts[1]);
