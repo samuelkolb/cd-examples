@@ -34,7 +34,7 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 
 	@Override
 	public void run() {
-		Log.LOG.printLine(getParameters().goal.get().accept(this));
+		getParameters().goal.get().accept(this);
 	}
 
 	@Override
@@ -51,12 +51,16 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 	public Void visitOptimization() {
 		OptimizationTestClient client = new OptimizationTestClient(getConfiguration(), getParameters().model.get());
 		if(evaluation.splitSize.get().isEmpty()) {
+			Log.LOG.saveState().off();
 			OptimizationTester tester = client.getTester();
+			Log.LOG.revert();
 			evaluate(client, tester, "", "");
 		} else {
 			for(Double split : evaluation.splitSize.get()) {
+				Log.LOG.saveState().off();
 				OptimizationTester tester = client.getTester(split);
-				evaluate(client, tester, "split | ", String.format("%.5f | ", split));
+				Log.LOG.revert();
+				evaluate(client, tester, "split | ", String.format("%.3f | ", split));
 			}
 		}
 		return null;
@@ -64,7 +68,7 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 
 	private void evaluate(OptimizationTestClient client, OptimizationTester tester, String titlePrefix, String prefix) {
 		Log.LOG.printLine("Seed: " + Randomness.getSeed());
-		Log.LOG.printLine(titlePrefix + "prefs | error | mean  | stDev |  min  |  max ");
+		Log.LOG.printLine(titlePrefix + "prefs | error | runs  | mean  | stDev |  min  |  max ");
 		for(Double prefSize : this.evaluation.prefSize.get()) {
 			for(Double errorSize : this.evaluation.errorSize.get()) {
 				Log.LOG.saveState().off();
@@ -74,8 +78,8 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 				}
 				Log.LOG.revert();
 				Statistics stats = new Statistics(scores);
-				Log.LOG.formatLine("%s%.5f | %.5f | %.5f | %.5f | %.5f | %.5f | %.5f", prefix, prefSize, errorSize,
-						stats.getMean(), stats.getStdDev(), stats.getMin(), stats.getMax());
+				Log.LOG.formatLine("%s%.3f | %.3f | % 5d | %.3f | %.3f | %.3f | %.3f", prefix, prefSize, errorSize,
+						stats.getSize(), stats.getMean(), stats.getStdDev(), stats.getMin(), stats.getMax());
 			}
 		}
 	}

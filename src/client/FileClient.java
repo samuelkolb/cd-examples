@@ -299,17 +299,17 @@ public class FileClient {
 		String[] parts = taskString.split("\\(");
 		parts[parts.length - 1] = parts[parts.length - 1].substring(0, parts[parts.length - 1].length() - 1);
 		String type = parts[0];
+		String[] args = parts[1].split(",");
 		if("speed".equals(type)) {
-			String[] args = parts[1].split(",");
 			return new DelayedEfficiencyTask(state, args[0], Integer.parseInt(args[1].trim()));
 		} else {
 			//noinspection SuspiciousMethodCalls
-			SettingParameters setting = state.settings.get(parts[1]);
+			SettingParameters setting = state.settings.get(args[0]);
 			if("learn".equals(type)) {
 				return new LearningTask(setting);
 			} else if("evaluate".equals(type)) {
-				EvaluationParameters evaluation = state.evaluations.get(parts[2]);
-				int runs = Integer.parseInt(parts[3]);
+				EvaluationParameters evaluation = state.evaluations.get(args[1]);
+				int runs = Integer.parseInt(args[2]);
 				return new EvaluationTask(setting, evaluation, runs);
 			}
 		}
