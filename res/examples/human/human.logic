@@ -1,0 +1,25 @@
+type Human
+
+pred human(Human)
+pred male(Human)
+pred female(Human)
+
+search human male female
+
+example standard {
+	const Human An
+	const Human Sam
+
+	human(An)
+	human(Sam)
+	male(Sam)
+	female(An)
+}
+
+example both {
+	const Human Both
+
+    male(Both)
+    female(Both)
+    human(Both)
+}
