@@ -1,22 +1,35 @@
 package client.task;
 
+import clausal_discovery.run.OptimizationTestClient;
+import clausal_discovery.test.OptimizationTester;
+import client.setting.EvaluationParameters;
 import client.setting.Goal;
 import client.setting.SettingParameters;
 import log.Log;
+import util.Randomness;
+import util.Statistics;
 
 /**
- * Created by samuelkolb on 03/11/15.
+ * The evaluation task evaluates the accuracy an experiment.
  *
  * @author Samuel Kolb
  */
-public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor<Double> {
+public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor<Void> {
+
+	private final EvaluationParameters evaluation;
+
+	private final int runs;
 
 	/**
 	 * Creates an optimization task.
 	 * @param parameters	The setting parameters
+	 * @param runs			The number of times an experiment is run
+	 * @param evaluation	The evaluation parameters
 	 */
-	public EvaluationTask(SettingParameters parameters) {
+	public EvaluationTask(SettingParameters parameters, EvaluationParameters evaluation, int runs) {
 		super(parameters);
+		this.runs = runs;
+		this.evaluation = evaluation;
 	}
 
 	@Override
@@ -25,17 +38,45 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 	}
 
 	@Override
-	public Double visitConstraints() {
+	public Void visitConstraints() {
 		throw new UnsupportedOperationException("Evaluation of constraint learning currently not supported");
 	}
 
 	@Override
-	public Double visitSoftConstraints() {
+	public Void visitSoftConstraints() {
 		throw new UnsupportedOperationException("Evaluation of soft constraint learning currently not supported");
 	}
 
 	@Override
-	public Double visitOptimization() {
-		return null; // TODO implement
+	public Void visitOptimization() {
+		OptimizationTestClient client = new OptimizationTestClient(getConfiguration(), getParameters().model.get());
+		if(evaluation.splitSize.get().isEmpty()) {
+			OptimizationTester tester = client.getTester();
+			evaluate(client, tester, "", "");
+		} else {
+			for(Double split : evaluation.splitSize.get()) {
+				OptimizationTester tester = client.getTester(split);
+				evaluate(client, tester, "split | ", String.format("%.5f | ", split));
+			}
+		}
+		return null;
+	}
+
+	private void evaluate(OptimizationTestClient client, OptimizationTester tester, String titlePrefix, String prefix) {
+		Log.LOG.printLine("Seed: " + Randomness.getSeed());
+		Log.LOG.printLine(titlePrefix + "prefs | error | mean  | stDev |  min  |  max ");
+		for(Double prefSize : this.evaluation.prefSize.get()) {
+			for(Double errorSize : this.evaluation.errorSize.get()) {
+				Log.LOG.saveState().off();
+				double[] scores = new double[this.runs];
+				for(int i = 0; i < this.runs; i++) {
+					scores[i] = client.score(tester, prefSize, errorSize);
+				}
+				Log.LOG.revert();
+				Statistics stats = new Statistics(scores);
+				Log.LOG.formatLine("%s%.5f | %.5f | %.5f | %.5f | %.5f | %.5f | %.5f", prefix, prefSize, errorSize,
+						stats.getMean(), stats.getStdDev(), stats.getMin(), stats.getMax());
+			}
+		}
 	}
 }

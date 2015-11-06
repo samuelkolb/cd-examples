@@ -4,6 +4,7 @@ import basic.ArrayUtil;
 import basic.FileUtil;
 import clausal_discovery.core.LogicBase;
 import clausal_discovery.core.Preferences;
+import client.setting.EvaluationParameters;
 import client.setting.Goal;
 import client.setting.Model;
 import client.setting.Problem;
@@ -12,12 +13,12 @@ import client.task.EfficiencyTask;
 import client.task.EvaluationTask;
 import client.task.LearningTask;
 import client.task.Task;
-import log.LinkTransformer;
 import log.Log;
 import log.PrefixFilter;
 import logic.example.Example;
 import logic.theory.FileTheory;
 import logic.theory.Theory;
+import math.Range;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -53,6 +54,7 @@ public class FileClient {
 		Map<String, Problem> problems = new HashMap<>();
 		Map<String, SettingParameters> settings = new HashMap<>();
 		Map<String, Model> models = new HashMap<>();
+		Map<String, EvaluationParameters> evaluations = new HashMap<>();
 		Map<String, Task> tasks = new LinkedHashMap<>();
 	}
 
@@ -115,6 +117,7 @@ public class FileClient {
 			State state = new State();
 			parse(jsonObject, "problems", state, state.problems, this::parseProblem);
 			parse(jsonObject, "models", state, state.models, this::parseModel);
+			parse(jsonObject, "evaluations", state, state.evaluations, this::parseEvaluation);
 
 			if(jsonObject.containsKey("settings")) {
 				JSONObject object = (JSONObject) jsonObject.get("settings");
@@ -252,6 +255,7 @@ public class FileClient {
 
 		// Print string
 		parameters.printString.setOptional(fromJson(object, "print"));
+
 		state.settings.put(key, parameters);
 	}
 
@@ -262,6 +266,33 @@ public class FileClient {
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	protected EvaluationParameters parseEvaluation(JSONObject object, State state) {
+		EvaluationParameters evaluation = new EvaluationParameters();
+		evaluation.splitSize.set(parseRange(object, "split-size"));
+		evaluation.prefSize.set(parseRange(object, "pref-size"));
+		evaluation.errorSize.set(parseRange(object, "error-size"));
+		return evaluation;
+	}
+
+	protected Range<Double> parseRange(JSONObject object, String key) {
+		if(object.containsKey(key)) {
+			Object value = object.get(key);
+			if(value instanceof Double) {
+				return Range.singleton((Double) value);
+			} else if(value instanceof String){
+				String[] parts = ((String) value).split(":");
+				Double start = Double.parseDouble(parts[0]);
+				if(parts.length == 1) {
+					return Range.singleton(start);
+				}
+				Double step = Double.parseDouble(parts[1]);
+				Double max = Double.parseDouble(parts[2]);
+				return Range.doubleRange(start, step, max);
+			}
+		}
+		return Range.empty();
 	}
 
 	protected Task parseTask(String taskString, State state) {
@@ -277,7 +308,9 @@ public class FileClient {
 			if("learn".equals(type)) {
 				return new LearningTask(setting);
 			} else if("evaluate".equals(type)) {
-				return new EvaluationTask(setting);
+				EvaluationParameters evaluation = state.evaluations.get(parts[2]);
+				int runs = Integer.parseInt(parts[3]);
+				return new EvaluationTask(setting, evaluation, runs);
 			}
 		}
 		throw new IllegalStateException("Unknown type of task: " + type);

@@ -3,6 +3,7 @@ package client.setting;
 import clausal_discovery.core.Preferences;
 import clausal_discovery.core.score.ClauseFunction;
 import configuration.Parameters;
+import math.Range;
 
 /**
  * Created by samuelkolb on 03/11/15.
