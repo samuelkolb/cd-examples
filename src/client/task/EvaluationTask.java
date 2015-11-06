@@ -78,7 +78,7 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 				}
 				Log.LOG.revert();
 				Statistics stats = new Statistics(scores);
-				Log.LOG.formatLine("%s%.3f | %.3f | % 5d | %.3f | %.3f | %.3f | %.3f", prefix, prefSize, errorSize,
+				Log.LOG.formatLine("%s%.3f | %.3f | %-5d | %.3f | %.3f | %.3f | %.3f", prefix, prefSize, errorSize,
 						stats.getSize(), stats.getMean(), stats.getStdDev(), stats.getMin(), stats.getMax());
 			}
 		}
