@@ -1,7 +1,7 @@
 {
 	"problems": {
 		"diagonal": {
-			"logic": "nqueens_diqg.logic",
+			"logic": "nqueens_diag.logic",
 			"background": "nqueens_diag.background"
 		},
 		"smart": {
