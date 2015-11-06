@@ -1,0 +1,21 @@
+theory B0 : V {
+	/*{
+		! i : gap(i, i, 0).
+		! i1 i2 : gap(i1, i2, i2 - i1) <- i1 < i2.
+		! i1 i2 d : gap(i2, i1, d) <- gap(i1, i2, d).
+	}
+	! i1[pos] i2[pos] d : gap(i1, i2, d) => gap(i2, i1, d).
+
+    /*! i : gap(i, i, 0).
+    ! i1 i2 : i1 < i2 => gap(i1, i2, i2 - i1).
+    ! i1 i2 : i1 > i2 => gap(i1, i2, i1 - i2).
+
+    ! i : gap(i, i, 0).
+    ! i1 i2 : i1 < i2 => gap(i1, i2, i2 - i1).
+    ! i1 i2 : i1 > i2 => gap(i1, i2, i1 - i2).*/
+
+    ! i1 i2 d : gap(i1, i2, d) <=>
+        ((i1 = i2 & d = 0)
+        | (i1 < i2 & d = i2 - i1)
+        | (i1 > i2 & d = i1 - i2)).
+}

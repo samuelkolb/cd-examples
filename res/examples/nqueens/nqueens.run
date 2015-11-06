@@ -1,0 +1,36 @@
+{
+	"problems": {
+		"diagonal": {
+			"logic": "nqueens_diqg.logic",
+			"background": "nqueens_diag.background"
+		},
+		"smart": {
+			"logic": "nqueens_smart.logic",
+			"background": "nqueens_smart.background"
+		}
+	},
+	"settings": {
+		"common": {
+			"goal": "constraints",
+			"print": "{number, % 3d} : {clause}"
+		},
+		"diagonal": {
+			"parent": "common",
+			"problem": "diagonal",
+			"goal": "constraints",
+			"variables": 3,
+			"literals": 2
+		},
+		"smart": {
+			"parent": "common",
+			"problem": "smart",
+			"goal": "constraints",
+			"variables": 3,
+			"literals": 2
+		}
+	},
+	"tasks": {
+		"diagonal": "learn(diagonal)",
+		"smart": "learn(smart)"
+	}
+}

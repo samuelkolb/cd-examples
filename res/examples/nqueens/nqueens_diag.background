@@ -1,0 +1,5 @@
+theory B0 : V {
+    !r : ?1c : q(r, c).
+	!s: size(s) <=>  !r : ?1c : q(r, c) & diag1(r, s + r - c).
+	!s: size(s) <=>  !r : ?1c : q(r, c) & diag2(r, s + c - r).
+}
