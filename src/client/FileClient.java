@@ -25,6 +25,7 @@ import org.json.simple.JSONValue;
 import parse.LogicParser;
 import parse.ParseException;
 import parse.PreferenceParser;
+import time.Stopwatch;
 import util.Weighted;
 import vector.SafeList;
 import vector.SafeListBuilder;
@@ -130,15 +131,17 @@ public class FileClient {
 			}
 
 			parse(jsonObject, "tasks", state, state.tasks, this::parseTask);
+			Stopwatch stopwatch = new Stopwatch();
 			for(String taskName : this.tasks.orElse(state.tasks.keySet())) {
-				Log.LOG.formatLine("Running task: %s", taskName).printLine("----------");
+				Log.LOG.formatLine("--- Running task: %s ---", taskName);
+				stopwatch.start();
 				if(state.tasks.containsKey(taskName)) {
 					state.tasks.get(taskName).run();
 				} else {
 					Task task = parseTask(taskName, state);
 					task.run();
 				}
-				Log.LOG.newLine();
+				Log.LOG.formatLine("--- Took %.3f seconds ---", stopwatch.stop() / 1000).newLine();
 			}
 		} catch(FileNotFoundException e) {
 			throw new IllegalStateException(e);
