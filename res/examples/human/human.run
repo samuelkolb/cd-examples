@@ -1,0 +1,31 @@
+{
+	"problems": {
+		"standard": {
+			"logic": "human.logic",
+			"examples": ["standard"]
+		},
+		"extended": {
+			"logic": "human.logic"
+		}
+	},
+	"settings": {
+		"general": {
+			"goal": "constraints",
+			"print": "{number, % 3d} : {clause}",
+			"variables": 1,
+			"literals": 6
+		},
+		"standard": {
+			"parent": "general",
+			"problem": "standard"
+		},
+		"extended": {
+			"parent": "general",
+			"problem": "extended"
+		}
+	},
+	"tasks": {
+		"standard": "learn(standard)",
+		"extended": "learn(extended)"
+	}
+}
