@@ -20,6 +20,13 @@
 			[0.5, "live_in(0) & work_in(1) => false"]
 		]
 	},
+	"evaluations": {
+		"split": {
+			"split-size": 0.4,
+			"pref-size": 0.4,
+			"error-size": 0.4
+		}
+	},
 	"settings": {
 		"housing": {
 			"problem": "housing",
@@ -48,7 +55,7 @@
 	},
 	"tasks": {
 		"1": "learn(housing)",
-		"2": "evaluate(standard)",
-		"3": "evaluate(disconnected)"
+		"2": "evaluate(standard,split,4)",
+		"3": "evaluate(disconnected,split,4)"
 	}
 }
