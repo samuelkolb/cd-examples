@@ -1,11 +1,12 @@
 package client.task;
 
-import clausal_discovery.run.OptimizationTestClient;
+import clausal_discovery.configuration.Configuration;
 import clausal_discovery.test.OptimizationTester;
 import client.setting.EvaluationParameters;
 import client.setting.Goal;
 import client.setting.SettingParameters;
 import log.Log;
+import pair.TypePair;
 import util.Randomness;
 import util.Statistics;
 
@@ -49,24 +50,24 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 
 	@Override
 	public Void visitOptimization() {
-		OptimizationTestClient client = new OptimizationTestClient(getConfiguration(), getParameters().model.get());
 		if(evaluation.splitSize.get().isEmpty()) {
 			Log.LOG.saveState().off();
-			OptimizationTester tester = client.getTester();
+			OptimizationTester tester = new OptimizationTester(getConfiguration(), getConfiguration());
 			Log.LOG.revert();
-			evaluate(client, tester, "", "");
+			evaluate(tester, "", "");
 		} else {
 			for(Double split : evaluation.splitSize.get()) {
 				Log.LOG.saveState().off();
-				OptimizationTester tester = client.getTester(split);
+				TypePair<Configuration> configurations = getConfiguration().split(split);
+				OptimizationTester tester = new OptimizationTester(configurations.one(), configurations.two());
 				Log.LOG.revert();
-				evaluate(client, tester, "split | ", String.format("%.3f | ", split));
+				evaluate(tester, "split | ", String.format("%.3f | ", split));
 			}
 		}
 		return null;
 	}
 
-	private void evaluate(OptimizationTestClient client, OptimizationTester tester, String titlePrefix, String prefix) {
+	private void evaluate(OptimizationTester tester, String titlePrefix, String prefix) {
 		Log.LOG.printLine("Seed: " + Randomness.getSeed());
 		Log.LOG.printLine(titlePrefix + "prefs | error | runs  | mean  | stDev |  min  |  max ");
 		for(Double prefSize : this.evaluation.prefSize.get()) {
@@ -74,7 +75,7 @@ public class EvaluationTask extends ParametrizedTask implements Goal.GoalVisitor
 				Log.LOG.saveState().off();
 				double[] scores = new double[this.runs];
 				for(int i = 0; i < this.runs; i++) {
-					scores[i] = client.score(tester, prefSize, errorSize);
+					scores[i] = tester.test(getParameters().model.get(), prefSize, errorSize);
 				}
 				Log.LOG.revert();
 				Statistics stats = new Statistics(scores);
