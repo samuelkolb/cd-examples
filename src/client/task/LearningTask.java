@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Created by samuelkolb on 03/11/15.
+ * Represents a learning task.
  *
  * @author Samuel Kolb
  */

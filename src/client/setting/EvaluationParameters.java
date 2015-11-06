@@ -4,7 +4,7 @@ import configuration.Parameters;
 import math.Range;
 
 /**
- * Created by samuelkolb on 06/11/15.
+ * Contains parameters that control evaluation.
  *
  * @author Samuel Kolb
  */

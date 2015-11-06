@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by samuelkolb on 28/10/15.
+ * Encapsulates common functionality of parametrized tasks.
  *
  * @author Samuel Kolb
  */
-public abstract class ParametrizedTask implements Task {
+abstract class ParametrizedTask implements Task {
 
 	interface Extractor<T> {
 

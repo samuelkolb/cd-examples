@@ -5,7 +5,6 @@ import clausal_discovery.core.score.ClauseFunction;
 import clausal_discovery.validity.ValidityTable;
 import logic.expression.formula.Formula;
 import logic.theory.Vocabulary;
-import pair.Pair;
 import parse.ConstraintParser;
 import util.Weighted;
 import vector.SafeList;

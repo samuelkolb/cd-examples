@@ -51,11 +51,11 @@ import java.util.function.Predicate;
 public class FileClient {
 
 	private class State {
-		Map<String, Problem> problems = new HashMap<>();
-		Map<String, SettingParameters> settings = new HashMap<>();
-		Map<String, Model> models = new HashMap<>();
-		Map<String, EvaluationParameters> evaluations = new HashMap<>();
-		Map<String, Task> tasks = new LinkedHashMap<>();
+		final Map<String, Problem> problems = new HashMap<>();
+		final Map<String, SettingParameters> settings = new HashMap<>();
+		final Map<String, Model> models = new HashMap<>();
+		final Map<String, EvaluationParameters> evaluations = new HashMap<>();
+		final Map<String, Task> tasks = new LinkedHashMap<>();
 	}
 
 	private class DelayedEfficiencyTask implements Task {
@@ -160,6 +160,7 @@ public class FileClient {
 		}
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	protected Problem parseProblem(JSONObject object, State state) {
 		File file = new File(this.file.getParentFile(), (String) object.get("logic"));
 		try {
@@ -191,6 +192,7 @@ public class FileClient {
 		return background.isPresent() ? new Vector<>(new FileTheory(background.get())) : new Vector<>();
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	protected Model parseModel(JSONArray object, State state) {
 		SafeListBuilder<Weighted<String>> builder = SafeList.build(object.size());
 		for(Object value : object) {
@@ -268,6 +270,7 @@ public class FileClient {
 		}
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	protected EvaluationParameters parseEvaluation(JSONObject object, State state) {
 		EvaluationParameters evaluation = new EvaluationParameters();
 		evaluation.splitSize.set(parseRange(object, "split-size"));

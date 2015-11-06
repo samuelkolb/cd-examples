@@ -1,10 +1,11 @@
 package client.setting;
 
 /**
- * Created by samuelkolb on 03/11/15.
+ * Represents different kinds of goals.
  *
  * @author Samuel Kolb
  */
+@SuppressWarnings("unused")
 public enum Goal {
 
 	CONSTRAINTS {
@@ -24,6 +25,7 @@ public enum Goal {
 		}
 	};
 
+	@SuppressWarnings("JavaDoc")
 	public interface GoalVisitor<T> {
 		T visitConstraints();
 		T visitSoftConstraints();
@@ -36,5 +38,6 @@ public enum Goal {
 	 * @param <T>		The return type
 	 * @return			The return value
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public abstract <T> T accept(GoalVisitor<T> visitor);
 }

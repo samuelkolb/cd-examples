@@ -15,8 +15,8 @@ import java.util.Map;
 public class PrintStringParser {
 
 	public class State {
-		public StringBuilder builder = new StringBuilder();
-		public List<String> keys = new ArrayList<>();
+		public final StringBuilder builder = new StringBuilder();
+		public final List<String> keys = new ArrayList<>();
 	}
 
 	private class StringParser extends ScopeParser<State> {
@@ -62,6 +62,7 @@ public class PrintStringParser {
 	 * @param values	The values to substitute
 	 * @return	A formatted string
 	 */
+	@SuppressWarnings("unused")
 	public String parse(String string, Map<String, Object> values) {
 		return compile(string).format(values);
 	}

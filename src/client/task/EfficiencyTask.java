@@ -7,13 +7,14 @@ import util.Statistics;
 import java.util.Arrays;
 
 /**
- * Created by samuelkolb on 28/10/15.
+ * Measures the efficiency (speed) of a task.
  *
  * @author Samuel Kolb
  */
 public class EfficiencyTask implements Task {
 
-	public static final double MS = 1000.0;
+	private static final double MS = 1000.0;
+
 	private final Task task;
 
 	private final int runs;

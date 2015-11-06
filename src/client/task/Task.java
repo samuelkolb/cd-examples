@@ -1,7 +1,7 @@
 package client.task;
 
 /**
- * Created by samuelkolb on 03/11/15.
+ * A generic, runnable task.
  *
  * @author Samuel Kolb
  */

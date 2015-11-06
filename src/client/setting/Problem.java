@@ -4,11 +4,8 @@ import clausal_discovery.core.LogicBase;
 import logic.theory.Theory;
 import vector.Vector;
 
-import java.io.File;
-import java.util.Optional;
-
 /**
- * Created by samuelkolb on 28/10/15.
+ * Contains problem specific knowledge.
  *
  * @author Samuel Kolb
  */
