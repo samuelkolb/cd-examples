@@ -1,0 +1,18 @@
+{
+	"problems": {
+		"default": {
+			"logic": "table-setting.logic"
+		}
+	},
+	"settings": {
+		"default": {
+			"problem": "default",
+			"goal": "constraints",
+			"variables": 1,
+			"literals": 4
+		}
+	},
+	"tasks": {
+		"default": "learn(default)"
+	}
+}

@@ -1,0 +1,92 @@
+type Object
+
+type Fork > Object 
+type Knife > Object
+type Spoon > Object
+type SmallKnife > Object
+
+type Plate > Object
+type Bowl > Object
+type PastaPlate > Object
+type SoupPlate > Object
+type Saucer > Object
+
+type WaterGlass > Object 
+type WineGlass > Object
+type TeaCup > Object
+
+type PossCo > int
+
+pred fork(Fork)
+pred knife(Knife)
+pred spoon(Spoon)
+pred smallKnife(SmallKnife)
+
+pred plate(Plate)
+pred bowl(Bowl)
+pred pastaPlate(PastaPlate)
+pred soupPlate(SoupPlate)
+pred saucer(Saucer)
+
+pred waterGlass(WaterGlass)
+pred wineGlass(WineGlass)
+pred teaCup(TeaCup)
+
+pred food_container(Object)
+pred drink_container(Object)
+pred food_utensil(Object)
+
+pred above_of(Object, Object)
+pred left_of(Object, Object)
+pred on(Object, Object)
+
+pred position(PossCo,PossCo,PossCo,Object)
+
+example 1 {
+	const TeaCup Cup
+	const Plate Pl
+	const Knife Kn
+	const PossCo 0 1
+
+	teaCup(Cup)
+	plate(Pl)
+	knife(Kn)
+	position(0, 0, 0, Pl)
+	position(1, 0, 0, Kn)
+	position(1, 1, 0, Cup)
+}
+
+%example 2 {
+	const WaterGlass Water
+	const Plate Pl
+	const Knife Kn
+	const PossCo 0 1
+
+	waterGlass(Water)
+	plate(Pl)
+	knife(Kn)
+	position(0, 0, 0, Pl)
+	position(1, 0, 0, Kn)
+	position(1, 1, 0, Water)
+
+}
+
+example 3 {
+	const Fork Fo
+	const Plate Pl
+	const Knife Kn
+	const TeaCup Cup
+	const PossCo 0 1 2
+
+	fork(Fo)
+	plate(Pl)
+	knife(Kn)
+	teaCup(Cup)
+	position(0, 0, 0, Fo)
+	position(1, 0, 0, Pl)
+	position(2, 0, 0, Kn)
+	position(2, 1, 0, Cup)
+
+}
+%
+
