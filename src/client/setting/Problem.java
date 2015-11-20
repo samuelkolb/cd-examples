@@ -2,6 +2,7 @@ package client.setting;
 
 import clausal_discovery.core.LogicBase;
 import logic.theory.Theory;
+import vector.SafeList;
 import vector.Vector;
 
 /**
@@ -17,9 +18,9 @@ public class Problem {
 		return logicBase;
 	}
 
-	private final Vector<Theory> backgroundTheories;
+	private final SafeList<Theory> backgroundTheories;
 
-	public Vector<Theory> getBackgroundTheories() {
+	public SafeList<Theory> getBackgroundTheories() {
 		return backgroundTheories;
 	}
 
@@ -28,7 +29,7 @@ public class Problem {
 	 * @param logicBase				The logic base
 	 * @param backgroundTheories	A vector of background theories
 	 */
-	public Problem(LogicBase logicBase, Vector<Theory> backgroundTheories) {
+	public Problem(LogicBase logicBase, SafeList<Theory> backgroundTheories) {
 		this.logicBase = logicBase;
 		this.backgroundTheories = backgroundTheories;
 	}

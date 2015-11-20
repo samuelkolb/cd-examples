@@ -13,6 +13,7 @@ import client.task.EfficiencyTask;
 import client.task.EvaluationTask;
 import client.task.LearningTask;
 import client.task.Task;
+import log.LinkTransformer;
 import log.Log;
 import log.PrefixFilter;
 import logic.example.Example;
@@ -114,6 +115,7 @@ public class FileClient {
 	public void run() {
 		try {
 			Log.LOG.addMessageFilter(PrefixFilter.ignore("INFO").and(PrefixFilter.ignore("CLIENT INFO")));
+			Log.LOG.addTransformer(new LinkTransformer());
 			JSONObject jsonObject = (JSONObject) JSONValue.parse(new FileReader(this.file));
 			State state = new State();
 			parse(jsonObject, "problems", state, state.problems, this::parseProblem);
@@ -188,11 +190,11 @@ public class FileClient {
 		return logicBase;
 	}
 
-	private Vector<Theory> getBackground(JSONObject object) {Optional<File> background = object.containsKey("background")
+	private SafeList<Theory> getBackground(JSONObject object) {
+		Optional<File> background = object.containsKey("background")
 			? Optional.of(new File(this.file.getParentFile(), (String) object.get("background")))
 			: Optional.empty();
-
-		return background.isPresent() ? new Vector<>(new FileTheory(background.get())) : new Vector<>();
+		return background.isPresent() ? new SafeList<>(new FileTheory(background.get())) : new SafeList<>();
 	}
 
 	@SuppressWarnings("UnusedParameters")

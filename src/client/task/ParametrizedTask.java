@@ -7,6 +7,7 @@ import log.Log;
 import logic.theory.Theory;
 import parse.PrintString;
 import parse.PrintStringParser;
+import vector.SafeList;
 import vector.Vector;
 
 import java.util.HashMap;
@@ -51,7 +52,7 @@ abstract class ParametrizedTask implements Task {
 	}
 
 	protected Configuration getConfiguration() {LogicBase logicBase = getParameters().problem.get().getLogicBase();
-		Vector<Theory> theories = getParameters().problem.get().getBackgroundTheories();
+		SafeList<Theory> theories = getParameters().problem.get().getBackgroundTheories();
 		int variables = (int) (long) getParameters().variables.get();
 		int literals = (int) (long) getParameters().literals.get();
 		return new Configuration(logicBase, theories, variables, literals);

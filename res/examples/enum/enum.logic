@@ -1,11 +1,11 @@
 enum Car Ferrari BMW VW
-pred faster(Car, Car)
+pred Faster(Car, Car)
 
 example 1 {
-	faster(Ferrari, BMW)
-	faster(BMW, VW)
+	Faster(Ferrari, BMW)
+	Faster(BMW, VW)
 }
 
 example 2 {
-	faster(Ferrari, VW)
+	Faster(Ferrari, VW)
 }
