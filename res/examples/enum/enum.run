@@ -10,7 +10,11 @@
 			"goal": "constraints",
 			"variables": 3,
 			"literals": 3,
-			"print": "{number, % 3d} : {clause}"
+			"print": "{number, % 3d} : {clause}",
+		},
+		"test": {
+			"parent": "default",
+			"logging": true
 		}
 	},
 	"tasks": {
