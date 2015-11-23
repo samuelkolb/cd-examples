@@ -4,6 +4,7 @@ pred Faster(Car, Car)
 example 1 {
 	Faster(Ferrari, BMW)
 	Faster(BMW, VW)
+	Faster(Ferrari, VW)
 }
 
 example 2 {
