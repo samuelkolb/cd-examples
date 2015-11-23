@@ -22,6 +22,10 @@
 			"parent": "standard",
 			"problem": "minimal"
 		},
+		"test": {
+			"parent": "minimal",
+			"logging": true
+		},
 		"optimal": {
 			"parent": "standard",
 			"problem": "optimal"
