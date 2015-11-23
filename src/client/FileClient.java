@@ -260,6 +260,9 @@ public class FileClient {
 			parameters.preferences.set(preferences);
 		}
 
+		Optional<Boolean> logging = fromJson(object, "logging");
+		parameters.logging.set(logging.isPresent() && logging.get());
+
 		// Print string
 		parameters.printString.setOptional(fromJson(object, "print"));
 

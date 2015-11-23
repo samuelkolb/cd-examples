@@ -29,6 +29,8 @@ public class SettingParameters extends Parameters {
 
 	public final Key<Preferences> preferences = makeKey();
 
+	public final Key<Boolean> logging = makeKey();
+
 	/**
 	 * Creates a new setting parameters object
 	 */
