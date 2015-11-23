@@ -80,6 +80,23 @@ public class FileClient {
 		}
 	}
 
+	private class DelayedTask implements Task {
+
+		private final State state;
+
+		private final String taskName;
+
+		public DelayedTask(State state, String taskName) {
+			this.state = state;
+			this.taskName = taskName;
+		}
+
+		@Override
+		public void run() {
+			state.tasks.get(taskName).run();
+		}
+	}
+
 	/**
 	 * Execute the file client from command line.
 	 * @param args	{filename}
@@ -307,12 +324,14 @@ public class FileClient {
 	}
 
 	protected Task parseTask(String taskString, State state) {
-		String[] parts = taskString.split("\\(");
+		String[] parts = taskString.split("\\(", 2);
 		parts[parts.length - 1] = parts[parts.length - 1].substring(0, parts[parts.length - 1].length() - 1);
 		String type = parts[0];
 		String[] args = parts[1].split(",");
 		if("speed".equals(type)) {
-			return new DelayedEfficiencyTask(state, args[0], Integer.parseInt(args[1].trim()));
+			String taskName = args[0];
+			Task task = taskName.contains("(") ? parseTask(taskName, state) : new DelayedTask(state, taskName);
+			return new EfficiencyTask(task, Integer.parseInt(args[1].trim()));
 		} else {
 			//noinspection SuspiciousMethodCalls
 			SettingParameters setting = state.settings.get(args[0]);
