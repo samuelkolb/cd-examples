@@ -11,6 +11,7 @@ import client.setting.Problem;
 import client.setting.SettingParameters;
 import client.task.EfficiencyTask;
 import client.task.EvaluationTask;
+import client.task.IdpDebugTask;
 import client.task.LearningTask;
 import client.task.Task;
 import log.LinkTransformer;
@@ -337,6 +338,8 @@ public class FileClient {
 			SettingParameters setting = state.settings.get(args[0]);
 			if("learn".equals(type)) {
 				return new LearningTask(setting);
+			} else if("idp-debug".equals(type)) {
+				return new IdpDebugTask(setting);
 			} else if("evaluate".equals(type)) {
 				EvaluationParameters evaluation = state.evaluations.get(args[1]);
 				int runs = Integer.parseInt(args[2]);
