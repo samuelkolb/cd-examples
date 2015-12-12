@@ -1,0 +1,41 @@
+type Song
+enum Genre Alternative Blues Classical Country Dance Electronic Folk HipHopRap Indie Inspirational AsianPop Jazz Latin Metal NewAge Opera Pop RnBSoul Reggae Rock WorldMusic
+enum Speed Slow Normal Fast VeryFast
+pred is_genre(Song, Genre)
+pred has_speed(Song, Speed)
+before(Song, Song)
+
+example 1{
+	const Song S0 S3 S4 S2 S1
+	
+	is_genre(S0, Opera)
+	has_speed(S0, Slow)
+	is_genre(S3, Inspirational)
+	has_speed(S3, Slow)
+	is_genre(S4, HipHopRap)
+	has_speed(S4, Slow)
+	is_genre(S2, Electronic)
+	has_speed(S2, Normal)
+	is_genre(S1, Jazz)
+	has_speed(S1, Normal)
+	before(S0, S3)
+	before(S3, S4)
+	before(S4, S0)
+	before(S0, S3)
+	before(S3, S0)
+	before(S0, S0)
+	before(S0, S4)
+	before(S4, S2)
+	before(S2, S1)
+	before(S1, S2)
+	before(S2, S3)
+	before(S3, S3)
+	before(S3, S4)
+	before(S4, S1)
+	before(S1, S2)
+	before(S2, S0)
+	before(S0, S4)
+	before(S4, S3)
+	before(S3, S4)
+	before(S4, S4)
+}

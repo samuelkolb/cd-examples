@@ -1,0 +1,20 @@
+{
+	"problems": {
+		"music": {
+			"logic": "music.logic"
+		}
+	},
+	"settings": {
+		"standard": {
+			"problem": "music",
+			"goal": "constraints",
+			"variables": 3,
+			"literals": 3,
+			"logging": true,
+			"print": "{number, % 3d} : {clause}"
+		}
+	},
+	"tasks": {
+		"1": "learn(standard)"
+	}
+}
