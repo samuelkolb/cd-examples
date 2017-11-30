@@ -1,6 +1,6 @@
 package parse;
 
-import vector.Vector;
+import vector.SafeList;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -15,9 +15,9 @@ public class PrintString {
 
 	private final String formatString;
 
-	private final Vector<String> keys;
+	private final SafeList<String> keys;
 
-	public Vector<String> getKeys() {
+	public SafeList<String> getKeys() {
 		return keys;
 	}
 
@@ -30,7 +30,7 @@ public class PrintString {
 	 * @param formatString	The format string
 	 * @param keys			The keys
 	 */
-	public PrintString(String formatString, Vector<String> keys) {
+	public PrintString(String formatString, SafeList<String> keys) {
 		this.formatString = formatString;
 		this.keys = keys;
 	}
