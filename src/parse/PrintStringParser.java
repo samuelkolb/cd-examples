@@ -1,5 +1,6 @@
 package parse;
 
+import vector.SafeList;
 import vector.Vector;
 
 import java.util.ArrayList;
@@ -75,6 +76,6 @@ public class PrintStringParser {
 	public PrintString compile(String string) {
 		ParseCursor parseCursor = new ParseCursor(string);
 		State state = new StringParser().parse(parseCursor, new State());
-		return new PrintString(state.builder.toString(), new Vector<>(String.class, state.keys));
+		return new PrintString(state.builder.toString(), new SafeList<>(state.keys));
 	}
 }
